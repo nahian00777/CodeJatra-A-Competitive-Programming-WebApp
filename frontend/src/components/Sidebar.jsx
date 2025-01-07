@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Swords,
@@ -9,6 +10,8 @@ import {
   Moon,
   ChevronLeft,
   ChevronRight,
+  User,
+  Home,
 } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 
@@ -30,6 +33,7 @@ const NavItem = ({ icon, text, collapsed, onClick }) => (
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <div
@@ -40,7 +44,7 @@ const Sidebar = () => {
       <div className="flex flex-col h-full p-4">
         <div className="flex items-center justify-between mb-6">
           {!collapsed && (
-            <h2 className="text-xl font-bold dark:text-white">Menu</h2>
+            <h2 className="text-xl font-bold dark:text-white">CodeJatra</h2>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
@@ -66,11 +70,30 @@ const Sidebar = () => {
 
         <nav className="flex-1 space-y-2">
           <NavItem
+            icon={<Home size={20} />}
+            text="Dashboard"
+            collapsed={collapsed}
+            onClick={() => {
+              /* Handle navigation */
+              navigate("/user/dashboard");
+            }}
+          />
+          <NavItem
+            icon={<User size={20} />}
+            text="CF Profile"
+            collapsed={collapsed}
+            onClick={() => {
+              /* Handle navigation */
+              navigate("/user/cf-profile");
+            }}
+          />
+          <NavItem
             icon={<Swords size={20} />}
             text="DUEL"
             collapsed={collapsed}
             onClick={() => {
               /* Handle navigation */
+              navigate("/user/duel");
             }}
           />
           <NavItem
@@ -79,6 +102,7 @@ const Sidebar = () => {
             collapsed={collapsed}
             onClick={() => {
               /* Handle navigation */
+              navigate("/user/leaderboard");
             }}
           />
           <NavItem
@@ -87,6 +111,7 @@ const Sidebar = () => {
             collapsed={collapsed}
             onClick={() => {
               /* Handle navigation */
+              navigate("/user/iupc-details");
             }}
           />
           <NavItem
@@ -95,6 +120,7 @@ const Sidebar = () => {
             collapsed={collapsed}
             onClick={() => {
               /* Handle navigation */
+              navigate("/user/contest-details");
             }}
           />
         </nav>
