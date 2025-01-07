@@ -19,18 +19,18 @@ function App() {
       <Route
         path="/user/*"
         element={
-          <div className="flex h-screen">
+          <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
             <Sidebar /> {/* Sidebar remains persistent */}
-            <div className="flex-1 p-4">
+            <main className="flex-1 overflow-y-auto">
               <Routes>
                 <Route path="dashboard" element={<DashBoard />} />
                 <Route path="iupc-details" element={<IUPCDetails />} />
                 <Route path="duel" element={<Duel />} />
                 <Route path="leaderboard" element={<LeaderBoard />} />
                 <Route path="cf-profile" element={<CFProfile />} />
-                <Route path="contest-details" element={<ContestDetails/>} />
+                <Route path="contest-details" element={<ContestDetails />} />
               </Routes>
-            </div>
+            </main>
           </div>
         }
       />
