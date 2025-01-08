@@ -35,8 +35,7 @@ const solvedRatings = [
 
 function CFProfile() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Profile Header */}
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="text-center mb-12">
         <div className="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden">
           <img
@@ -54,7 +53,7 @@ function CFProfile() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
           <h2 className="text-xl font-bold mb-4">Dual Rating History</h2>
-          <LineChart width={800} height={300} data={duelRatingHistory}>
+          <LineChart width={700} height={300} data={duelRatingHistory}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
@@ -89,7 +88,7 @@ function CFProfile() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <div className="bg-white p-6 rounded-lg shadow-md lg:col-span-2 flex flex-col items-center gap-8">
           <h2 className="text-xl font-bold mb-4">CodeForces Rating History</h2>
-          <LineChart width={800} height={400} data={codeforcesRatingHistory}>
+          <LineChart width={700} height={400} data={codeforcesRatingHistory}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
