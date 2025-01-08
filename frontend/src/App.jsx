@@ -9,6 +9,7 @@ import CFProfile from "./pages/user/CFProfile";
 import Sidebar from "./components/Sidebar"; // Import Sidebar component
 import ContestDetails from "./pages/user/ContestDetails";
 import Topbar from "./components/Topbar"; // Import Topbar component
+import Duelhistory from "./pages/user/Duelhistory";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
                   <Route path="leaderboard" element={<LeaderBoard />} />
                   <Route path="cf-profile" element={<CFProfile />} />
                   <Route path="contest-details" element={<ContestDetails />} />
+                  <Route path="duels/history" element={<Duelhistory />} />
                 </Routes>
               </main>
             </div>

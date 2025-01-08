@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { act, useState } from "react";
+import Sidebar from "../../components/Sidebar";
 import { Swords, Timer, Trophy, Users, ArrowRight, Target } from "lucide-react";
+import DuelMatchmaking from "../../components/DuelMatchmaking";
+import DuelDetails from "../../components/DuelDetails";
+import { useNavigate } from "react-router-dom";
 
 const DuelCard = ({ title, children }) => (
-  <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+  <div className=" dark:bg-gray-800 rounded-xl p-6 shadow-sm">
     <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
       {title}
     </h3>
@@ -24,8 +28,10 @@ const StatItem = ({ icon: Icon, label, value }) => (
   </div>
 );
 
-const Duel = () => {
+function Duel() {
   const [isSearching, setIsSearching] = useState(false);
+  const [showMatchmaking, setShowMatchmaking] = useState(false);
+  const [selectedDuel, setSelectedDuel] = useState(null);
 
   const stats = {
     totalDuels: 48,
@@ -34,10 +40,46 @@ const Duel = () => {
     currentStreak: 5,
   };
 
-  const handleStartDuel = () => {
-    setIsSearching(true);
-    // Simulated opponent finding logic would go here
-  };
+  const navigate = useNavigate();
+
+  const recentDuels = [
+    {
+      id: 1,
+      opponent: "Sarah Wilson",
+      problem: "Binary Tree Traversal",
+      result: "Won",
+      time: "2h ago",
+      code: "// Your solution...\nfunction traverse(root) {\n  if (!root) return;\n  console.log(root.val);\n  traverse(root.left);\n  traverse(root.right);\n}",
+      opponentCode: "// Opponent solution...",
+      timeSpent: "25:30",
+      rating: 1850,
+      ratingChange: "+15",
+    },
+    {
+      id: 2,
+      opponent: "Mike Johnson",
+      problem: "Dynamic Programming",
+      result: "Lost",
+      time: "5h ago",
+      code: "// Your solution...",
+      opponentCode: "// Opponent solution...",
+      timeSpent: "45:00",
+      rating: 2100,
+      ratingChange: "-12",
+    },
+    {
+      id: 3,
+      opponent: "Emma Davis",
+      problem: "Graph Algorithms",
+      result: "Won",
+      time: "1d ago",
+      code: "// Your solution...",
+      opponentCode: "// Opponent solution...",
+      timeSpent: "35:15",
+      rating: 1920,
+      ratingChange: "+18",
+    },
+  ];
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -51,7 +93,7 @@ const Duel = () => {
           </p>
         </div>
         <button
-          onClick={handleStartDuel}
+          onClick={() => setShowMatchmaking(true)}
           disabled={isSearching}
           className={`px-6 py-3 rounded-lg flex items-center gap-2 text-white font-medium transition-all
             ${
@@ -86,7 +128,6 @@ const Duel = () => {
             />
           </div>
         </DuelCard>
-
         <DuelCard title="Current Rankings">
           <div className="space-y-4">
             {[
@@ -123,34 +164,29 @@ const Duel = () => {
               </div>
             ))}
           </div>
+
+          <div className="flex items-center justify-end pt-4">
+            <button
+              className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+              onClick={() => {
+                navigate("/user/leaderboard");
+                activeItem("leaderboard");
+              }} // Redirect to the leaderboard page
+            >
+              View Full Leaderboard
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
         </DuelCard>
       </div>
 
       <DuelCard title="Recent Duels">
         <div className="space-y-4">
-          {[
-            {
-              opponent: "Sarah Wilson",
-              problem: "Binary Tree Traversal",
-              result: "Won",
-              time: "2h ago",
-            },
-            {
-              opponent: "Mike Johnson",
-              problem: "Dynamic Programming",
-              result: "Lost",
-              time: "5h ago",
-            },
-            {
-              opponent: "Emma Davis",
-              problem: "Graph Algorithms",
-              result: "Won",
-              time: "1d ago",
-            },
-          ].map((duel, index) => (
+          {recentDuels.map((duel) => (
             <div
-              key={index}
-              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+              key={duel.id}
+              onClick={() => setSelectedDuel(duel)}
+              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
             >
               <div className="flex items-center gap-4">
                 <Users className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -178,10 +214,31 @@ const Duel = () => {
               </div>
             </div>
           ))}
+
+          {/* Add this part for full history navigation */}
+          <div
+            onClick={() => navigate("/user/duels/history")} // Update with your route
+            className="flex items-center justify-center p-3 mt-4 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition"
+          >
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              View Full History
+            </span>
+            <ArrowRight className="w-5 h-5 text-gray-400 ml-2" />
+          </div>
         </div>
       </DuelCard>
+
+      {showMatchmaking && (
+        <DuelMatchmaking onClose={() => setShowMatchmaking(false)} />
+      )}
+      {selectedDuel && (
+        <DuelDetails
+          duel={selectedDuel}
+          onClose={() => setSelectedDuel(null)}
+        />
+      )}
     </div>
   );
-};
+}
 
 export default Duel;
