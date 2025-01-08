@@ -5,6 +5,7 @@ import myImage from "../../assets/images/LOGOBRIGHT.jpg";
 import group_ from "../../assets/images/group_.jpg";
 import heroImage from "../../assets/images/hero-1.jpg";
 import counterImage from "../../assets/images/counter.jpg";
+import { Link } from "react-router-dom";
 
 const heroStyles = {
   background: `linear-gradient(#00000042, #0000004d), url(${heroImage}) center / cover`,
@@ -92,9 +93,13 @@ export default function LandingPage() {
               </h1>
               <h5 class="text-white mt-3 mb-4">Track Transform Triumph</h5>
               <div>
-                <a href="LogIn.php" class="btn btn-brand me-2">
+                {/* <a href="LogIn.php" class="btn btn-brand me-2">
                   GET STARTED
-                </a>
+                </a> */}
+                {/* // Replace the existing button with the following: */}
+                <Link to="/user/dashboard" className="btn btn-brand me-2">
+                  GET STARTED
+                </Link>
                 <a href="#services" class="btn btn-light ms-2">
                   Our Services
                 </a>

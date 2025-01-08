@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Bell, LogOut, User, Search } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 const Topbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const navigate = useNavigate();
 
   const notifications = [
     { id: 1, message: "New duel request from Alex", time: "2m ago" },
@@ -81,8 +83,8 @@ const Topbar = () => {
           </button>
 
           {showProfile && (
-            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
-              <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2">
+            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50" >
+              <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2" onClick={() => {navigate("/user/cf-profile");}}>
                 <User className="w-4 h-4" />
                 Profile
               </button>

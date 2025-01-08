@@ -79,15 +79,6 @@ const Sidebar = () => {
             }}
           />
           <NavItem
-            icon={<User size={20} />}
-            text="CF Profile"
-            collapsed={collapsed}
-            onClick={() => {
-              /* Handle navigation */
-              navigate("/user/cf-profile");
-            }}
-          />
-          <NavItem
             icon={<Swords size={20} />}
             text="DUEL"
             collapsed={collapsed}
