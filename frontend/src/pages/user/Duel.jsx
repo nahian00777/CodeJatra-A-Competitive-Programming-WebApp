@@ -1,6 +1,13 @@
 import React, { act, useState } from "react";
-import Sidebar from "../../components/Sidebar";
-import { Swords, Timer, Trophy, Users, ArrowRight, Target } from "lucide-react";
+import {
+  PlayCircle,
+  Swords,
+  Timer,
+  Trophy,
+  Users,
+  ArrowRight,
+  Target,
+} from "lucide-react";
 import DuelMatchmaking from "../../components/DuelMatchmaking";
 import DuelDetails from "../../components/DuelDetails";
 import { useNavigate } from "react-router-dom";
@@ -92,19 +99,32 @@ function Duel() {
             Challenge other programmers in real-time coding battles
           </p>
         </div>
-        <button
-          onClick={() => setShowMatchmaking(true)}
-          disabled={isSearching}
-          className={`px-6 py-3 rounded-lg flex items-center gap-2 text-white font-medium transition-all
+        <div className="flex item-center mx-2 my-2">
+          <button
+            onClick={() => setShowMatchmaking(true)}
+            disabled={isSearching}
+            className={`px-6 py-3 mx-5 rounded-lg flex items-center gap-2 text-white font-medium transition-all
             ${
               isSearching
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
-        >
-          <Swords className="w-5 h-5" />
-          {isSearching ? "Searching..." : "Start Duel"}
-        </button>
+          >
+            <Swords className="w-5 h-5" />
+            {isSearching ? "Searching..." : "Start Duel"}
+          </button>
+
+          {/* Ongoing Challenge Button */}
+          <button
+            onClick={() => navigate("/user/ongoing-challenge")} // Navigate to the Ongoing Challenge page
+            className="px-6 py-3 rounded-lg flex items-center gap-2 bg-green-600 text-white font-medium hover:bg-green-700 transition-all"
+          >
+            <PlayCircle className="w-5 h-5" />
+            Ongoing Challenge
+          </button>
+        </div>
+
+        {/* Ongoing Challenge Button */}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -217,7 +237,7 @@ function Duel() {
 
           {/* Add this part for full history navigation */}
           <div
-            onClick={() => navigate("/user/duels/history")} // Update with your route
+            onClick={() => navigate("/user/duel-history")} // Update with your route
             className="flex items-center justify-center p-3 mt-4 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition"
           >
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400">

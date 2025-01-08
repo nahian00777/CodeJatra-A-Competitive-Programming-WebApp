@@ -1,9 +1,20 @@
 import React, { useState } from "react";
 import { X, Search, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const DuelMatchmaking = ({ onClose }) => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRating, setSelectedRating] = useState("any");
+
+  const handleChallenge = (opponent) => {
+    navigate("/user/duel-room", {
+      state: {
+        opponent,
+        problemUrl: "https://codeforces.com/problemset/problem/1/A",
+      },
+    });
+  };
 
   const onlineUsers = [
     { id: 1, name: "Sarah Wilson", rating: 1850, status: "online" },
@@ -87,6 +98,7 @@ const DuelMatchmaking = ({ onClose }) => {
                     </div>
                   </div>
                   <button
+                    onClick={() => handleChallenge(user)}
                     disabled={user.status !== "online"}
                     className={`px-4 py-2 rounded-lg font-medium ${
                       user.status === "online"
