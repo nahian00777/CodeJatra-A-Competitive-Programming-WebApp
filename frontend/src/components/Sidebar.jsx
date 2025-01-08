@@ -12,12 +12,14 @@ import {
   Home,
 } from "lucide-react";
 
-const NavItem = ({ icon, text, collapsed, onClick }) => (
+const NavItem = ({ icon, text, collapsed, onClick, isActive }) => (
   <button
     onClick={onClick}
     className={`w-full flex items-center ${
       collapsed ? "justify-center" : "gap-4"
-    } px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg transition-all duration-200 group relative`}
+    } px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg transition-all duration-200 group relative ${
+      isActive ? "bg-gray-800" : ""
+    }`}
   >
     <div className="flex items-center justify-center">{icon}</div>
     {!collapsed && <span>{text}</span>}
@@ -29,10 +31,15 @@ const NavItem = ({ icon, text, collapsed, onClick }) => (
   </button>
 );
 
-
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [activeItem, setActiveItem] = useState("dashboard"); // Set the initial active item
   const navigate = useNavigate();
+
+  const handleNavigation = (path, item) => {
+    setActiveItem(item); // Update active item when navigating
+    navigate(path); // Navigate to the page
+  };
 
   return (
     <div
@@ -72,37 +79,47 @@ const Sidebar = () => {
             icon={<Home size={20} />}
             text="Dashboard"
             collapsed={collapsed}
-            onClick={() => navigate("/user/dashboard")}
+            onClick={() => handleNavigation("/user/dashboard", "dashboard")}
+            isActive={activeItem === "dashboard"}
           />
           <NavItem
             icon={<User size={20} />}
             text="CF Profile"
             collapsed={collapsed}
-            onClick={() => navigate("/user/cf-profile")}
+            onClick={() => handleNavigation("/user/cf-profile", "cf-profile")}
+            isActive={activeItem === "cf-profile"}
           />
           <NavItem
             icon={<Swords size={20} />}
             text="DUEL"
             collapsed={collapsed}
-            onClick={() => navigate("/user/duel")}
+            onClick={() => handleNavigation("/user/duel", "duel")}
+            isActive={activeItem === "duel"}
           />
           <NavItem
             icon={<Trophy size={20} />}
             text="Leaderboard"
             collapsed={collapsed}
-            onClick={() => navigate("/user/leaderboard")}
+            onClick={() => handleNavigation("/user/leaderboard", "leaderboard")}
+            isActive={activeItem === "leaderboard"}
           />
           <NavItem
             icon={<Info size={20} />}
             text="IUPC Details"
             collapsed={collapsed}
-            onClick={() => navigate("/user/iupc-details")}
+            onClick={() =>
+              handleNavigation("/user/iupc-details", "iupc-details")
+            }
+            isActive={activeItem === "iupc-details"}
           />
           <NavItem
             icon={<Calendar size={20} />}
             text="Contest Details"
             collapsed={collapsed}
-            onClick={() => navigate("/user/contest-details")}
+            onClick={() =>
+              handleNavigation("/user/contest-details", "contest-details")
+            }
+            isActive={activeItem === "contest-details"}
           />
         </nav>
       </div>
