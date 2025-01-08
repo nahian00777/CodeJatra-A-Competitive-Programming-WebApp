@@ -82,13 +82,13 @@ const Sidebar = () => {
         </div>
 
         <nav className="flex-1 space-y-2">
-          <NavItem
+          {/* <NavItem
             icon={<Home size={20} />}
             text="Dashboard"
             collapsed={collapsed}
             onClick={() => handleNavigation("/user/dashboard", "dashboard")}
             isActive={activeItem === "dashboard"}
-          />
+          /> */}
           <NavItem
             icon={<Swords size={20} />}
             text="DUEL"
@@ -112,7 +112,7 @@ const Sidebar = () => {
             }
             isActive={activeItem === "iupc-details"}
           />
-          <NavItem
+          {/* <NavItem
             icon={<Calendar size={20} />}
             text="Contest Details"
             collapsed={collapsed}
@@ -120,7 +120,7 @@ const Sidebar = () => {
               handleNavigation("/user/contest-details", "contest-details")
             }
             isActive={activeItem === "contest-details"}
-          />
+          /> */}
         </nav>
 
         <div className="mt-auto">
