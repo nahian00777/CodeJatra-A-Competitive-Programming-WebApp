@@ -10,6 +10,7 @@ import {
   ChevronRight,
   User,
   Home,
+  LogOut, // Import logout icon
 } from "lucide-react";
 
 const NavItem = ({ icon, text, collapsed, onClick, isActive }) => (
@@ -39,6 +40,12 @@ const Sidebar = () => {
   const handleNavigation = (path, item) => {
     setActiveItem(item); // Update active item when navigating
     navigate(path); // Navigate to the page
+  };
+
+  const handleLogout = () => {
+    // Handle logout logic here
+    console.log("User logged out");
+    navigate("/"); // Redirect to the login page
   };
 
   return (
@@ -115,6 +122,16 @@ const Sidebar = () => {
             isActive={activeItem === "contest-details"}
           />
         </nav>
+
+        <div className="mt-auto">
+          <NavItem
+            icon={<LogOut size={20} />}
+            text="Logout"
+            collapsed={collapsed}
+            onClick={handleLogout}
+            isActive={false}
+          />
+        </div>
       </div>
     </div>
   );

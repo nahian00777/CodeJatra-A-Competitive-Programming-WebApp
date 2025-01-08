@@ -44,14 +44,14 @@ function CFProfile() {
             className="w-full h-full object-cover"
           />
         </div>
-        <h1 className="text-3xl font-bold mb-2">John Doe</h1>
-        <p className="text-gray-600 mb-1">@codeMaster</p>
-        <p className="text-xl font-semibold text-blue-600">Dual Rating: 1350</p>
+        <h1 className="text-3xl text-gray-400 font-bold mb-2">John Doe</h1>
+        <p className="text-gray-400 mb-1">@codeMaster</p>
+        <p className="text-xl font-semibold text-blue-600">Duel Rating: 1350</p>
       </div>
 
       {/* Dual Rating Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
+        <div className="lg:col-span-2 bg-gray-400 p-6 rounded-lg shadow-md flex flex-col items-center">
           <h2 className="text-xl font-bold mb-4">Dual Rating History</h2>
           <LineChart width={700} height={300} data={duelRatingHistory}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -63,7 +63,7 @@ function CFProfile() {
           </LineChart>
         </div>
         <div className="space-y-4 flex flex-col justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-gray-400 p-6 rounded-lg shadow-md">
             <div className="h-40 flex items-center gap-4">
               <Trophy className="w-12 h-12 text-yellow-500" />
               <div>
@@ -72,7 +72,7 @@ function CFProfile() {
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-gray-400 p-6 rounded-lg shadow-md">
             <div className="h-40 flex items-center gap-4">
               <Users className="w-12 h-12 text-green-500" />
               <div>
@@ -86,7 +86,7 @@ function CFProfile() {
 
       {/* CodeForces Stats Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        <div className="bg-white p-6 rounded-lg shadow-md lg:col-span-2 flex flex-col items-center gap-8">
+        <div className="bg-gray-400 p-6 rounded-lg shadow-md lg:col-span-2 flex flex-col items-center gap-8">
           <h2 className="text-xl font-bold mb-4">CodeForces Rating History</h2>
           <LineChart width={700} height={400} data={codeforcesRatingHistory}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -97,7 +97,7 @@ function CFProfile() {
             <Line type="monotone" dataKey="rating" stroke="#2196F3" />
           </LineChart>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
+        <div className="bg-gray-400 p-6 rounded-lg shadow-md flex flex-col items-center">
           <h2 className="text-xl font-bold mb-4">Submission Statistics</h2>
           <PieChart width={400} height={350}>
             <Pie
@@ -120,7 +120,7 @@ function CFProfile() {
       </div>
 
       {/* Solved Problems Rating Distribution */}
-      <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
+      <div className="bg-gray-400 p-6 rounded-lg shadow-md flex flex-col items-center">
         <h2 className="text-xl font-bold mb-4">Solved Problems by Rating</h2>
         <div className='flex justify-center w-full'>
           <BarChart width={1200} height={400} data={solvedRatings}>
