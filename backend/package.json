@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
-  "author": "Nahian Chowdhury, Sojib Bhattacharjee",
+  "author": "Nahian Chowdhury, Sojib Bhattacharjee, Md. Sagor Chowdhury, Akash Chowdhury",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
