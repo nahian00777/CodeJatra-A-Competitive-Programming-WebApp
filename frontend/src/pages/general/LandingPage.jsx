@@ -1,10 +1,10 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/mystyle.css'
-import myImage from '../assets/images/LOGOBRIGHT.jpg';
-import group_ from '../assets/images/group_.jpg';
-import heroImage from '../assets/images/hero-1.jpg';
-import counterImage from '../assets/images/counter.jpg';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../styles/mystyle.css';
+import myImage from '../../assets/images/LOGOBRIGHT.jpg';
+import group_ from '../../assets/images/group_.jpg';
+import heroImage from '../../assets/images/hero-1.jpg';
+import counterImage from '../../assets/images/counter.jpg';
 
 const heroStyles = {
     background: `linear-gradient(#00000042, #0000004d), url(${heroImage}) center / cover`,
