@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Swords, Timer, Trophy, Users, ArrowRight, Target } from "lucide-react";
 
 const DuelCard = ({ title, children }) => (
-  <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+  <div className="dark:bg-gray-800 rounded-xl p-6 shadow-sm">
     <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
       {title}
     </h3>
