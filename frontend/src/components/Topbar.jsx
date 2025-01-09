@@ -73,7 +73,7 @@ const Topbar = () => {
             className="w-8 h-8 rounded-full border-2 border-white/30"
           />
           <div className="flex flex-col items-start">
-            <span className="text-sm font-medium text-white">John Doe</span>
+            <span className="text-sm font-medium text-white">Sajib</span>
             <span className="text-xs text-blue-200 dark:text-gray-400">
               Rating: 1850
             </span>
