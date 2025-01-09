@@ -97,7 +97,7 @@ export default function LandingPage() {
                   GET STARTED
                 </a> */}
                 {/* // Replace the existing button with the following: */}
-                <Link to="/user/dashboard" className="btn btn-brand me-2">
+                <Link to="/user/duel" className="btn btn-brand me-2">
                   GET STARTED
                 </Link>
                 <a href="#services" class="btn btn-light ms-2">
