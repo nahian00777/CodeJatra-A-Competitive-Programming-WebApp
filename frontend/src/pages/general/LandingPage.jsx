@@ -22,7 +22,7 @@ export default function LandingPage() {
     <>
       <nav className="navbar navbar-expand-lg bg-white sticky-top">
         <div className="container">
-          <a className="navbar-brand" href="landingpage.php">
+          <a className="navbar-brand" href="\">
             <img
               src={myImage}
               alt="notfound"

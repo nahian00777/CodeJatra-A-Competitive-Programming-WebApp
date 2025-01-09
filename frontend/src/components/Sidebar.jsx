@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import myImage from "../assets/images/LOGOBRIGHT.jpg";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
@@ -10,7 +11,7 @@ import {
   ChevronRight,
   User,
   Home,
-  LogOut, // Import logout icon
+  LogOut,
 } from "lucide-react";
 
 const NavItem = ({ icon, text, collapsed, onClick, isActive }) => (
@@ -57,7 +58,14 @@ const Sidebar = () => {
       <div className="flex flex-col h-full p-4">
         <div className="flex items-center justify-between mb-6">
           {!collapsed && (
-            <h2 className="text-xl font-bold text-white">CodeJatra</h2>
+            <div className="flex items-center">
+              {/* <img
+                src= {myImage}
+                alt="CodeJatra Icon"
+                className="w-6 h-6 mr-3"
+              /> */}
+              <h6 className="text-xl font-bold text-white">CodeJatra</h6>
+            </div>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
