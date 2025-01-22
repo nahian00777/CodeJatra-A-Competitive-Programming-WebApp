@@ -38,10 +38,10 @@ userRouter.route("/refreshAcessToken").post(refreshAccessToken);
 userRouter.route("/changePassword").patch(verifyJWT, changeCurrentPassword);
 
 userRouter
-  .route("/changeAccountDetails")
+  .route("/updateAccountDetails")
   .patch(verifyJWT, updateAccountDetails);
 
-userRouter.route("/getCurrentUser").get(getCurrentUser);
+userRouter.route("/getCurrentUser").get(verifyJWT, getCurrentUser);
 
 userRouter
   .route("/updateAvatar")

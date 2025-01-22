@@ -33,16 +33,16 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   // 4th step :
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  let coverImageLocalPath;
-  if (req.files && req.files.coverImage.length > 0) {
-    coverImageLocalPath = req.files?.coverImage[0]?.path;
-  }
+  // let coverImageLocalPath;
+  // if (req.files && req.files.coverImage.length > 0) {
+  //   coverImageLocalPath = req.files?.coverImage[0]?.path;
+  // }
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is required");
   }
   // 5th step :
   const avatar = await uploadOnCloudinary(avatarLocalPath);
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+  // const coverImage = await uploadOnCloudinary(coverImageLocalPath);
   // 6th step :
   if (!avatar) {
     throw new ApiError(500, "Avatar upload failed");
@@ -54,7 +54,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username: username.toLowerCase(),
     password: password,
     avatar: avatar.url,
-    coverImage: coverImage?.url || "",
+    // coverImage: coverImage?.url || "",
   });
 
   // 8th step :
@@ -68,7 +68,7 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, createdUser, "User created successfully"));
 });
 
-const loginUser = async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
   /*
     1. get user information from req.body
     2. check
@@ -80,10 +80,9 @@ const loginUser = async (req, res) => {
     8. return success response
   */
   // 1st step :
-  const { email, username, password } = req.body;
-
-  // 2nd step :
-  if (!email && !username) {
+  const { username, password, email } = req.body;
+  // 2nd step:
+  if (!username && !email) {
     throw new ApiError(400, "Email or username is required");
   }
 
@@ -144,7 +143,7 @@ const loginUser = async (req, res) => {
         "User logged in successfully"
       )
     );
-};
+});
 
 const logoutUser = async (req, res) => {
   /*
@@ -186,7 +185,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     2. refresh token --> access token
     3. return success response
     */
-  const incomingRefreshToken = req.cookie.refreshToken;
+  const incomingRefreshToken = req.cookies.refreshToken;
   if (!incomingRefreshToken) {
     throw new ApiError(401, "Unauthorized access");
   }
@@ -261,7 +260,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "User fetched successfully"));
+    .json(new ApiResponse(200, req.user, "User found successfully"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
