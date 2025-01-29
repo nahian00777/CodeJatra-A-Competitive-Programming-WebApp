@@ -12,6 +12,7 @@ import Sidebar from "./components/Sidebar";
 import ContestDetails from "./pages/user/ContestDetails";
 import Topbar from "./components/Topbar";
 import OngoingChallenge from "./pages/user/OngoingChallenge";
+import Chat from "./components/chat";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
                   <Route path="cf-profile" element={<CFProfile />} />
                   <Route path="contest-details" element={<ContestDetails />} />
                   <Route path="ongoing-challenge" element={<OngoingChallenge />} />
+                  <Route path="chat" element={<Chat />} />
                 </Routes>
               </main>
             </div>
