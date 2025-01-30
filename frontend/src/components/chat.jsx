@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Send, RefreshCw, Settings, Bot } from "lucide-react";
 
 const ChatCard = ({ title, children }) => (
-  <div className="dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+  <div className="dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+      <MessageSquare className="w-5 h-5" />
       {title}
     </h3>
     {children}
@@ -15,9 +16,17 @@ function Chat() {
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      const { scrollHeight, clientHeight } = chatContainerRef.current;
+      const maxScroll = scrollHeight - clientHeight;
+      chatContainerRef.current.scrollTo({
+        top: maxScroll,
+        behavior: "smooth",
+      });
+    }
   };
 
   useEffect(() => {
@@ -32,7 +41,6 @@ function Chat() {
     setInputMessage("");
     setIsLoading(true);
 
-    // Add user message to chat
     setMessages((prev) => [...prev, { type: "user", content: userMessage }]);
 
     try {
@@ -66,40 +74,51 @@ function Chat() {
     }
   };
 
-  return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Header Section */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            AI Assistant
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Get help with your programming questions and challenges
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <button className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
-            <RefreshCw className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          </button>
-          <button className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
-            <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          </button>
-        </div>
-      </div>
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
 
-      {/* Main Chat Section */}
-      <div className="grid grid-cols-1 gap-6">
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+      <div className="max-w-5xl mx-auto">
+        {/* Header Section */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+              <Bot className="w-8 h-8 text-blue-600" />
+              AI Assistant
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              Get help with your programming questions and challenges
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <button className="p-2.5 rounded-lg dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all border border-gray-200 dark:border-gray-700">
+              <RefreshCw className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            </button>
+            <button className="p-2.5 rounded-lg dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all border border-gray-200 dark:border-gray-700">
+              <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            </button>
+          </div>
+        </div>
+
+        {/* Main Chat Section */}
         <ChatCard title="Chat">
           <div className="flex flex-col h-[600px]">
-            <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+            <div
+              ref={chatContainerRef}
+              className="flex-1 overflow-y-auto mb-4 space-y-4 custom-scrollbar pr-2"
+            >
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
-                  <Bot className="w-12 h-12 mb-4" />
-                  <p className="text-lg">
+                  <Bot className="w-16 h-16 mb-4 text-blue-600" />
+                  <p className="text-lg font-medium">
                     Start a conversation with the AI assistant
                   </p>
-                  <p className="text-sm">
+                  <p className="text-sm mt-2">
                     Ask about programming, algorithms, or coding challenges
                   </p>
                 </div>
@@ -110,16 +129,16 @@ function Chat() {
                   key={index}
                   className={`flex ${
                     message.type === "user" ? "justify-end" : "justify-start"
-                  }`}
+                  } message-animation`}
                 >
                   <div
-                    className={`max-w-[80%] p-4 rounded-lg ${
+                    className={`max-w-[80%] p-2 rounded-lg ${
                       message.type === "user"
                         ? "bg-blue-600 text-white"
                         : message.type === "error"
                         ? "bg-red-100 text-red-700"
                         : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-                    }`}
+                    } shadow-sm`}
                   >
                     <pre className="whitespace-pre-wrap font-sans">
                       {message.content}
@@ -128,12 +147,12 @@ function Chat() {
                 </div>
               ))}
               {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                <div className="flex justify-start message-animation">
+                  <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-sm">
                     <div className="flex space-x-2">
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100" />
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200" />
+                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" />
+                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce delay-100" />
+                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce delay-200" />
                     </div>
                   </div>
                 </div>
@@ -143,18 +162,21 @@ function Chat() {
 
             <form onSubmit={handleSubmit} className="mt-auto">
               <div className="flex items-center gap-4">
-                <input
-                  type="text"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder="Type your message..."
-                  className="flex-1 p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isLoading}
-                />
+                <div className="flex-1 relative">
+                  <textarea
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Type your message... (Press Enter to send)"
+                    rows={1}
+                    className="w-full p-2 border border-gray-200 dark:border-gray-600 rounded-lg dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    disabled={isLoading}
+                  />
+                </div>
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-all"
+                  disabled={isLoading || !inputMessage.trim()}
+                  className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-all flex items-center justify-center"
                 >
                   <Send className="w-5 h-5" />
                 </button>
