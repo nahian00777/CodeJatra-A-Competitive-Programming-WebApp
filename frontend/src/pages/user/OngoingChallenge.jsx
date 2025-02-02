@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { X, Clock } from "lucide-react";
+import { X, Clock, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const OngoingChallenge = ({ onClose, challengeDetails }) => {
+const OngoingChallenge = ({ onClose, challengeDetails, onSubmit }) => {
   const navigate = useNavigate();
   const [timeRemaining, setTimeRemaining] = useState(
     challengeDetails?.timeRemaining || 3600
   ); // Default 1 hour in seconds
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,14 +25,20 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
   };
 
   const handleCloseAndNavigate = () => {
-    onClose && onClose(); // Call onClose if provided
-    navigate("/user/duel", { replace: true }); // Navigate back to Duel page
+    onClose && onClose();
+    navigate("/user/duel", { replace: true });
+  };
+
+  const handleSendMessage = () => {
+    if (newMessage.trim()) {
+      setMessages([...messages, { sender: "you", text: newMessage }]);
+      setNewMessage("");
+    }
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="dark:bg-gray-800 rounded-xl p-6 max-w-4xl w-full mx-4 relative">
-        {/* Close Button */}
         <button
           onClick={handleCloseAndNavigate}
           aria-label="Close"
@@ -44,8 +52,8 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Challenge Details Section */}
-          <div className="col-span-1 md:col-span-2 flex flex-col bg-gray-50 dark:bg-gray-700 rounded-lg shadow-inner p-4">
+          {/* Problem Section */}
+          <div className="col-span-2 flex flex-col bg-gray-50 dark:bg-gray-700 rounded-lg shadow-inner p-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
               Problem Details
             </h3>
@@ -60,10 +68,16 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
             >
               View Problem
             </a>
+            <button
+              onClick={onSubmit}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 mb-4"
+            >
+              Submit Solution
+            </button>
 
             <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400">
               <Clock className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-              Time Remaining:{" "}
+              Time Remaining:
               <span className="font-medium text-gray-900 dark:text-white">
                 {formatTime(timeRemaining)}
               </span>
@@ -82,10 +96,8 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
                   className="flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-gray-800"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-sm font-medium text-gray-900 dark:text-white">
-                        {participant.name.charAt(0)}
-                      </div>
+                    <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-sm font-medium text-gray-900 dark:text-white">
+                      {participant.name.charAt(0)}
                     </div>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">
@@ -102,6 +114,48 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* Chat Section */}
+        <div className="mt-6 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-inner p-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+            Chat
+          </h3>
+          <div className="h-48 overflow-y-auto p-2 space-y-2 border dark:border-gray-600 rounded-lg">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`p-2 rounded-lg max-w-xs ${
+                  message.sender === "you"
+                    ? "bg-gray-200 dark:bg-gray-600 self-end"
+                    : "bg-blue-100 dark:bg-blue-800 self-start"
+                }`}
+              >
+                <p className="text-sm font-medium">
+                  {message.sender === "you" ? "You" : "Opponent"}
+                </p>
+                <p className="text-gray-700 dark:text-gray-200">
+                  {message.text}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 flex gap-3">
+            <input
+              type="text"
+              placeholder="Type a message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+              className="flex-1 px-4 py-2 rounded-lg border dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+            />
+            <button
+              onClick={handleSendMessage}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <Send className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
