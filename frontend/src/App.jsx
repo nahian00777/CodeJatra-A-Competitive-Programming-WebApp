@@ -1,5 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./redux/store"; // Import the Redux store
 import LandingPage from "./pages/general/LandingPage";
 import DashBoard from "./pages/user/DashBoard";
 import IUPCDetails from "./pages/user/IUPCDetails";
@@ -14,7 +16,7 @@ import Topbar from "./components/Topbar";
 import OngoingChallenge from "./pages/user/OngoingChallenge";
 import Chat from "./components/chat";
 
-function App() {
+function AppContent() {
   return (
     <Routes>
       {/* Landing page route */}
@@ -47,6 +49,14 @@ function App() {
         }
       />
     </Routes>
+  );
+}
+
+function App() {
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
   );
 }
 
