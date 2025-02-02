@@ -1,46 +1,28 @@
-import React from "react";
-import { Calendar, ExternalLink } from "lucide-react";
-
-const contests = [
-  {
-    id: "1",
-    name: "BUET IUPC 2024",
-    host: "BUET Computer Club",
-    date: "2024-04-15",
-    duration: "5 hour",
-    location: "BUET Academic Building",
-    platform: {
-      name: "Hackerrank",
-      url: "https://www.hackerrank.com",
-    },
-  },
-  {
-    id: "2",
-    name: "DU CSE Fest Programming Contest",
-    host: "DU Computer Science & Engineering",
-    date: "2024-05-20",
-    duration: "4 hour",
-    location: "DU Academic Building",
-    platform: {
-      name: "Codeforces",
-      url: "https://www.codeforces.com",
-    },
-  },
-  {
-    id: "3",
-    name: "SUST Inter University Programming Contest",
-    host: "SUST Computer Club",
-    date: "2024-06-10",
-    duration: "5 hour",
-    location: "SUST Campus",
-    platform: {
-      name: "UVa Online Judge",
-      url: "https://onlinejudge.org",
-    },
-  },
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Calendar } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const IUPCDetails = () => {
+  const [contests, setContests] = useState([]);
+
+  useEffect(() => {
+    const fetchContests = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/v1/iupcs/get-iupc"
+        );
+        // Assuming the API response is structured as response.data.data
+        setContests(response.data.data);
+      } catch (error) {
+        console.error("Error fetching contests:", error);
+        toast.error("Error fetching contests.");
+      }
+    };
+    fetchContests();
+  }, []);
+
   const addToCalendar = (contest) => {
     const startDate = new Date(contest.date);
     const endDate = new Date(
@@ -48,7 +30,7 @@ const IUPCDetails = () => {
     );
 
     const event = {
-      text: `${contest.name} at ${contest.location}`,
+      text: `${contest.contestName} at ${contest.location}`,
       dates: `${startDate.toISOString()}/${endDate.toISOString()}`,
       details: `Host: ${contest.host}\nPlatform: ${contest.platform.name}\nLocation: ${contest.location}`,
     };
@@ -66,7 +48,7 @@ const IUPCDetails = () => {
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
         Upcoming IUPCs
       </h1>
-      <div className=" dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div className="dark:bg-gray-800 rounded-xl shadow-sm p-6">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
@@ -86,7 +68,7 @@ const IUPCDetails = () => {
                 className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
-                  {contest.name}
+                  {contest.contestName}
                 </td>
                 <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
                   {contest.host}
@@ -102,7 +84,7 @@ const IUPCDetails = () => {
                 </td>
                 <td className="px-4 py-3 text-blue-600 dark:text-blue-400">
                   <a
-                    href={contest.platform.url}
+                    href= {contest.platform.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:underline"
@@ -124,6 +106,7 @@ const IUPCDetails = () => {
           </tbody>
         </table>
       </div>
+      <ToastContainer />
     </div>
   );
 };

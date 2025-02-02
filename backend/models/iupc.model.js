@@ -5,26 +5,32 @@ const iupcSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  host : {
+  host: {
     type: String,
-    required: true, 
+    required: true,
   },
-  date : {
+  date: {
     type: Date,
-    required: true
+    required: true,
   },
-  duration : {
+  duration: {
     type: Number,
-    required: true
+    required: true,
   },
-  location : {
+  location: {
     type: String,
-    required: true
-  }, 
-  platform : {
-    type: String,
-    required: true
-  }
+    required: true,
+  },
+  platform: {
+    name: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+  },
 });
 
 export const IUPC = mongoose.model("IUPC", iupcSchema);

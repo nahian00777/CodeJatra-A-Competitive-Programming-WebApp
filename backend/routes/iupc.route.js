@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { getIUPCs } from "../controllers/iupc.controller.js";
+import { getIUPCs, addIUPC } from "../controllers/iupc.controller.js";
 
 const iupcRouter = Router();
-iupcRouter.route("/iupc-details").get(getIUPCs);
+iupcRouter.route("/get-iupc").get(getIUPCs);
+iupcRouter.route("/add-iupc").post(addIUPC);
 
 export default iupcRouter;
 // prettier-ignore
