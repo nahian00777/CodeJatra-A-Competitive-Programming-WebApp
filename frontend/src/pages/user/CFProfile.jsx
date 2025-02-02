@@ -1,6 +1,8 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import { Trophy, Users } from 'lucide-react';
+import { useSelector } from 'react-redux';
+
 
 // Mock data - replace with actual API data
 const duelRatingHistory = [
@@ -34,6 +36,8 @@ const solvedRatings = [
 ];
 
 function CFProfile() {
+  const username = useSelector((state) => state.user.username);
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="text-center mb-12">
@@ -44,7 +48,7 @@ function CFProfile() {
             className="w-full h-full object-cover"
           />
         </div>
-        <h1 className="text-3xl text-gray-400 font-bold mb-2">Sajib Bhattacharjee</h1>
+        <h1 className="text-3xl text-gray-400 font-bold mb-2">{username}</h1>
         <p className="text-gray-400 mb-1">@codeMaster</p>
         <p className="text-xl font-semibold text-blue-600">Duel Rating: 1350</p>
       </div>

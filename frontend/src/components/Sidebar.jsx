@@ -13,6 +13,9 @@ import {
   Home,
   LogOut,
 } from "lucide-react";
+import { useSelector, useDispatch } from 'react-redux';
+import {logout, toggleDarkMode } from '../redux/userSlice.jsx';
+
 
 const NavItem = ({ icon, text, collapsed, onClick, isActive }) => (
   <button

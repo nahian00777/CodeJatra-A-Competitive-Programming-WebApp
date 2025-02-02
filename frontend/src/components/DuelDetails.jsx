@@ -4,7 +4,7 @@ import { X, Clock, Trophy, Code, User } from "lucide-react";
 const DuelDetails = ({ duel, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className=" dark:bg-gray-800 rounded-xl p-6 max-w-4xl w-full mx-4 relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 max-w-4xl w-full mx-4 relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -22,7 +22,7 @@ const DuelDetails = ({ duel, onClose }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+          <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               <div>
@@ -72,7 +72,7 @@ const DuelDetails = ({ duel, onClose }) => {
                 Your Solution
               </h3>
             </div>
-            <pre className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto">
+            <pre className="bg-white dark:bg-gray-900 p-4 rounded-lg overflow-x-auto">
               <code className="text-sm text-gray-800 dark:text-gray-200">
                 {duel.code}
               </code>
@@ -85,7 +85,7 @@ const DuelDetails = ({ duel, onClose }) => {
                 Opponent's Solution
               </h3>
             </div>
-            <pre className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto">
+            <pre className="bg-white dark:bg-gray-900 p-4 rounded-lg overflow-x-auto">
               <code className="text-sm text-gray-800 dark:text-gray-200">
                 {duel.opponentCode}
               </code>

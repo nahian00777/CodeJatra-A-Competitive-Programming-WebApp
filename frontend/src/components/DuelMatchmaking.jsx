@@ -25,7 +25,7 @@ const DuelMatchmaking = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-gray-300 dark:bg-gray-800 rounded-xl p-6 max-w-2xl w-full mx-4 relative">
+      <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 max-w-2xl w-full mx-4 relative">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"

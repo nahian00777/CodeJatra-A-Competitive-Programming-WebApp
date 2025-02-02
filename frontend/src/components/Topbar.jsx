@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Bell, User, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
+
 
 const Topbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -12,6 +14,7 @@ const Topbar = () => {
     { id: 3, message: "New contest starting soon", time: "3h ago" },
   ];
 
+  const userName = useSelector((state) => state.user.username);
   return (
     <div className="h-16 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-gray-800 dark:to-gray-900 px-6 flex items-center justify-between">
       {/* Search Section */}
@@ -73,7 +76,7 @@ const Topbar = () => {
             className="w-8 h-8 rounded-full border-2 border-white/30"
           />
           <div className="flex flex-col items-start">
-            <span className="text-sm font-medium text-white">Sajib</span>
+            <span className="text-sm font-medium text-white"> {userName}</span>
             <span className="text-xs text-blue-200 dark:text-gray-400">
               Rating: 1850
             </span>
