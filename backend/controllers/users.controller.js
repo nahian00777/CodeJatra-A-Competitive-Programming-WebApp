@@ -17,16 +17,15 @@ const registerUser = asyncHandler(async (req, res) => {
   // 9. return success response
 
   // 1st step :
-  const { fullName, email, username, password } = req.body;
+  const { fullName, email, handle, username, password } = req.body;
   // 2nd step :
-  if (
-    [fullName, email, username, password].some((field) => !field.trim() === "")
-  ) {
+  if ([fullName, email, handle, username, password].some((field) => !field || String(field).trim() === "")) {
+    console.log("{fullName, email, handle, username, password}", {fullName, email, handle, username, password});
     throw new ApiError(400, "All fields are required");
-  }
+}
   // 3rd step :
   const existedUser = await User.findOne({
-    $or: [{ email }, { username }],
+    $or: [{ email }, { username }, {handle}],
   });
   if (existedUser) {
     throw new ApiError(405, "User already exists");
@@ -51,6 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     fullName: fullName,
     email: email,
+    handle: handle,
     username: username.toLowerCase(),
     password: password,
     avatar: avatar.url,

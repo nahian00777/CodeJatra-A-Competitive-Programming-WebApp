@@ -43,7 +43,7 @@ function Duel() {
   const [selectedDuel, setSelectedDuel] = useState(null);
   const dispatch = useDispatch();
   dispatch(setUsername('Brinto')); // sets the new name and delete it when log in page is up and running
-  dispatch(setHandle('-is-this-dft-')); // sets the new name and delete it when log in page is up and running
+  dispatch(setHandle('-is-this-dft_')); // sets the new name and delete it when log in page is up and running
 
   const stats = {
     totalDuels: 48,
