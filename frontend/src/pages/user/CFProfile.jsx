@@ -37,6 +37,7 @@ const solvedRatings = [
 
 function CFProfile() {
   const username = useSelector((state) => state.user.username);
+  const handle = useSelector((state) => state.user.handle);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -49,7 +50,7 @@ function CFProfile() {
           />
         </div>
         <h1 className="text-3xl text-gray-400 font-bold mb-2">{username}</h1>
-        <p className="text-gray-400 mb-1">@codeMaster</p>
+        <p className="text-gray-400 mb-1">{handle}</p>
         <p className="text-xl font-semibold text-blue-600">Duel Rating: 1350</p>
       </div>
 

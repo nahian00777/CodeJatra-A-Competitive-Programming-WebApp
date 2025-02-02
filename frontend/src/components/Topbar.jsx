@@ -15,6 +15,7 @@ const Topbar = () => {
   ];
 
   const userName = useSelector((state) => state.user.username);
+  const handle = useSelector((state) => state.user.handle);
   return (
     <div className="h-16 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-gray-800 dark:to-gray-900 px-6 flex items-center justify-between">
       {/* Search Section */}
