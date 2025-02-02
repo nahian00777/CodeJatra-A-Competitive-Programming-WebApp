@@ -12,6 +12,7 @@
   "author": "Nahian Chowdhury, Sojib Bhattacharjee, Md. Sagor Chowdhury, Akash Chowdhury",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
@@ -22,6 +23,7 @@
     "mongoose": "^8.9.3",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.9",
+    "redux": "^5.0.1",
     "socket.io": "^4.8.1"
   }
 }

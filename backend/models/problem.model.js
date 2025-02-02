@@ -5,6 +5,8 @@ const problemSchema = new mongoose.Schema({
   index: String,
   rating: Number,
   name: String,
+  solver: String,
+  solved: Boolean,
 });
 
-export const Problem = mongoose.model("Problem", problemSchema);
+export const Problems = mongoose.model("Problem", problemSchema);

@@ -1,4 +1,4 @@
-import React, { act, useState } from "react";
+import React, { act, useState, useEffect} from "react";
 import {
   PlayCircle,
   Swords,
@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Target,
 } from "lucide-react";
+import axios from "axios";
 import DuelMatchmaking from "../../components/DuelMatchmaking";
 import DuelDetails from "../../components/DuelDetails";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +45,28 @@ function Duel() {
   const dispatch = useDispatch();
   dispatch(setUsername('Brinto')); // sets the new name and delete it when log in page is up and running
   dispatch(setHandle('-is-this-dft_')); // sets the new name and delete it when log in page is up and running
+
+  useEffect(() => {
+    const runBackendScript = async () => {
+
+      const handle = '-is-this-dft_';	
+        try {
+            await axios.post("http://localhost:3000/api/v1/problems/fetchProblems", {
+              handle
+            }, {
+              headers: { "Content-Type": "application/json" }
+            });
+            console.log("fetching problem data script executed");
+        } catch (error) {
+            console.error("Error running fetching problem data: ", error);
+        }
+    };
+
+    runBackendScript();
+}, []);
+
+
+
 
   const stats = {
     totalDuels: 48,
