@@ -21,7 +21,7 @@ export const createDuel = asyncHandler(async (req, res) => {
   const user1SolvedProblems = await Problems.find({
     solver: user1.handle,
     solved: true,
-    rating: rating
+    rating: rating,
   });
   const user1SolvedSet = new Set(
     user1SolvedProblems.map((p) => `${p.contestId}-${p.index}`)
@@ -31,14 +31,14 @@ export const createDuel = asyncHandler(async (req, res) => {
   const user2SolvedProblems = await Problems.find({
     solver: user2.handle,
     solved: true,
-    rating: rating
+    rating: rating,
   });
   const user2SolvedSet = new Set(
     user2SolvedProblems.map((p) => `${p.contestId}-${p.index}`)
   );
 
   // Fetch all problems from MongoDB
-  const allProblems = await Problems.find({rating: rating});
+  const allProblems = await Problems.find({ rating: rating });
 
   // Filter unsolved problems
   const unsolvedProblems = allProblems.filter((problem) => {
@@ -166,4 +166,31 @@ export const completeDuel = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, duel, "Duel completed successfully"));
+});
+
+export const getDuel = asyncHandler(async (req, res) => {
+  const { duelId } = req.params;
+
+  // Fetch the duel by ID
+  const duel = await Duel.findById(duelId).populate("user1 user2");
+  if (!duel) {
+    throw new ApiError(404, "Duel not found");
+  }
+
+  // Return the duel status
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        status: duel.status,
+        user1: duel.user1[0].username,
+        user2: duel.user2[0].username,
+        problem: duel.problem,
+        winner: duel.winner ? duel.winner.username : null,
+        startTime: duel.startTime,
+        endTime: duel.endTime,
+      },
+      "Duel status retrieved successfully"
+    )
+  );
 });
