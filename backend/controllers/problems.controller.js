@@ -9,7 +9,7 @@ const fetchProblems = asyncHandler(async (req, res) => {
 
   // 2. Fetch the user's solved problems from Codeforces API
   const APIresponse = await axios.get(
-    `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=10000`
+    `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=100000`
   );
   const responses = APIresponse.data.result;
 
