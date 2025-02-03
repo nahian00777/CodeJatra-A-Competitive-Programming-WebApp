@@ -136,6 +136,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const options = await {
     httpOnly: true,
     secure: true,
+    sameSite: "none",
   };
 
   // 7th && 8th step :
@@ -269,9 +270,22 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
+  const user = req.user;
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "User found successfully"));
+    .json(new ApiResponse(200, user, "User fetched successfully"));
+});
+
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find().select(
+    "-password -refreshToken -avatar -email"
+  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "Users fetched Successfully"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -381,4 +395,5 @@ export {
   getCurrentUser,
   updateAccountDetails,
   updateUserAvatar,
+  getAllUsers,
 };

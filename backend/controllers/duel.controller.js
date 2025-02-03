@@ -10,9 +10,14 @@ import axios from "axios";
 export const createDuel = asyncHandler(async (req, res) => {
   const { user1Id, user2Id, rating } = req.body;
 
-  // Validate users
-  const user1 = await User.findById(user1Id);
-  const user2 = await User.findById(user2Id);
+  // user1Id is handle of the user who is creating the duel
+  // user2Id is handle of the user who is accepting the duel
+  const user1 = await User.findOne({ handle: user1Id });
+  const user2 = await User.findOne({ handle: user2Id });
+
+  // // Validate users
+  // const user1 = await User.findById(user1Id);
+  // const user2 = await User.findById(user2Id);
   if (!user1 || !user2) {
     throw new ApiError(404, "One or both users not found");
   }
@@ -56,8 +61,8 @@ export const createDuel = asyncHandler(async (req, res) => {
 
   // Create a new duel
   const duel = await Duel.create({
-    user1: [user1Id],
-    user2: [user2Id],
+    user1: [user1],
+    user2: [user2],
     problem: {
       contestId: selectedProblem.contestId,
       index: selectedProblem.index,
