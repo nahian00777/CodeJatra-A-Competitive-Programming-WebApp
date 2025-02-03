@@ -19,13 +19,23 @@ const registerUser = asyncHandler(async (req, res) => {
   // 1st step :
   const { fullName, email, handle, username, password } = req.body;
   // 2nd step :
-  if ([fullName, email, handle, username, password].some((field) => !field || String(field).trim() === "")) {
-    console.log("{fullName, email, handle, username, password}", {fullName, email, handle, username, password});
+  if (
+    [fullName, email, handle, username, password].some(
+      (field) => !field || String(field).trim() === ""
+    )
+  ) {
+    console.log("{fullName, email, handle, username, password}", {
+      fullName,
+      email,
+      handle,
+      username,
+      password,
+    });
     throw new ApiError(400, "All fields are required");
-}
+  }
   // 3rd step :
   const existedUser = await User.findOne({
-    $or: [{ email }, { username }, {handle}],
+    $or: [{ email }, { username }, { handle }],
   });
   if (existedUser) {
     throw new ApiError(405, "User already exists");
@@ -80,15 +90,16 @@ const loginUser = asyncHandler(async (req, res) => {
     8. return success response
   */
   // 1st step :
-  const { username, password, email } = req.body;
+  const { username, password } = req.body;
+  // console.log(username, password);
   // 2nd step:
-  if (!username && !email) {
+  if (!username) {
     throw new ApiError(400, "Email or username is required");
   }
 
   // 3rd step :
   const user = await User.findOne({
-    $or: [{ email }, { username }],
+    $or: [{ username }],
   });
 
   if (!user) {
