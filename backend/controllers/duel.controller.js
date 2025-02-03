@@ -107,36 +107,42 @@ export const completeDuel = asyncHandler(async (req, res) => {
 
   // Fetch problem details
   const { contestId, index } = duel.problem;
-  console.log(contestId, index);
+  // console.log(contestId, index);
   // Fetch submissions from Codeforces for both users
   const user1Submissions = await axios.get(
-    `https://codeforces.com/api/user.status?handle=${user1Handle}`
+    `https://codeforces.com/api/user.status?handle=${user1Handle}&from=1&count=10`
   );
   const user2Submissions = await axios.get(
-    `https://codeforces.com/api/user.status?handle=${user2Handle}`
+    `https://codeforces.com/api/user.status?handle=${user2Handle}&from=1&count=10`
   );
-  console.log("i am not here");
-  // Find the earliest submission time for the problem
-  const user1SolvedTime = user1Submissions.data.result
-    .filter(
-      (submission) =>
-        submission.problem.contestId === contestId &&
-        submission.problem.index === index &&
-        submission.verdict === "OK"
-    )
-    .map((submission) => submission.creationTimeSeconds)
-    .sort((a, b) => a - b)[0];
+  // console.log(user1Submissions.data.result);
+  // console.log(user2Submissions.data.result);
+  // Find the earliest submission time for the problem\
+  // console.log(user1Submissions.data.result.problem.contestId);
+  // console.log(user1Submissions.data.result);
+  // console.log(user1Submissions.data.result.verdict);
+  let user1SolvedTime = null;
+  let user2SolvedTime = null;
+  user1Submissions.data.result.forEach((submission) => {
+    if (
+      String(submission.problem.contestId) === String(contestId) &&
+      String(submission.problem.index) === String(index) &&
+      submission.verdict === "OK"
+    ) {
+      user1SolvedTime = submission.creationTimeSeconds;
+    }
+  });
 
-  const user2SolvedTime = user2Submissions.data.result
-    .filter(
-      (submission) =>
-        submission.problem.contestId === contestId &&
-        submission.problem.index === index &&
-        submission.verdict === "OK"
-    )
-    .map((submission) => submission.creationTimeSeconds)
-    .sort((a, b) => a - b)[0];
-
+  user2Submissions.data.result.forEach((submission) => {
+    if (
+      String(submission.problem.contestId) === String(contestId) &&
+      String(submission.problem.index) === String(index) &&
+      submission.verdict === "OK"
+    ) {
+      user2SolvedTime = submission.creationTimeSeconds;
+    }
+  });
+  console.log(user1SolvedTime, user2SolvedTime);
   // Check if neither user has solved the problem
   if (!user1SolvedTime && !user2SolvedTime) {
     return res
@@ -148,13 +154,33 @@ export const completeDuel = asyncHandler(async (req, res) => {
 
   // Determine the winner
   let winnerId = null;
+
+  // Ensure the duel start time is defined
+  const duelStartTime = duel.startTime.getTime() / 1000; // Convert to seconds
+
   if (user1SolvedTime && user2SolvedTime) {
-    winnerId =
-      user1SolvedTime < user2SolvedTime ? duel.user1[0]._id : duel.user2[0]._id;
-  } else if (user1SolvedTime) {
+    if (user1SolvedTime >= duelStartTime && user2SolvedTime >= duelStartTime) {
+      winnerId =
+        user1SolvedTime < user2SolvedTime
+          ? duel.user1[0]._id
+          : duel.user2[0]._id;
+    } else if (user1SolvedTime >= duelStartTime) {
+      winnerId = duel.user1[0]._id;
+    } else if (user2SolvedTime >= duelStartTime) {
+      winnerId = duel.user2[0]._id;
+    }
+  } else if (user1SolvedTime && user1SolvedTime >= duelStartTime) {
     winnerId = duel.user1[0]._id;
-  } else if (user2SolvedTime) {
+  } else if (user2SolvedTime && user2SolvedTime >= duelStartTime) {
     winnerId = duel.user2[0]._id;
+  }
+
+  // If no winner is determined, handle the case appropriately
+  if (!winnerId) {
+    console.log("No winner determined");
+    // You might want to throw an error or return a specific response here
+  } else {
+    console.log("Winner ID:", winnerId);
   }
 
   // Update the duel status to finished and set the winner
@@ -165,7 +191,7 @@ export const completeDuel = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, duel, "Duel completed successfully"));
+    .json(new ApiResponse(200, duel, "Winner determined successfully"));
 });
 
 export const getDuel = asyncHandler(async (req, res) => {
