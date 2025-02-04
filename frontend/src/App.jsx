@@ -15,6 +15,7 @@ import ContestDetails from "./pages/user/ContestDetails";
 import Topbar from "./components/Topbar";
 import OngoingChallenge from "./pages/user/OngoingChallenge";
 import Chat from "./components/chat";
+import LoginPage from "./pages/general/dummyLogin";
 
 function AppContent() {
   return (
@@ -40,8 +41,12 @@ function AppContent() {
                   <Route path="leaderboard" element={<LeaderBoard />} />
                   <Route path="cf-profile" element={<CFProfile />} />
                   <Route path="contest-details" element={<ContestDetails />} />
-                  <Route path="ongoing-challenge" element={<OngoingChallenge />} />
+                  <Route
+                    path="ongoing-challenge"
+                    element={<OngoingChallenge />}
+                  />
                   <Route path="chat" element={<Chat />} />
+                  <Route path="login" element={<LoginPage />} />
                 </Routes>
               </main>
             </div>
