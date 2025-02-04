@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    lastActive: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: true,
@@ -54,15 +58,13 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
-      // payload
       _id: this._id,
       email: this.email,
       username: this.username,
       fullName: this.fullName,
-    }, // secret key
+    },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      // token expiry time
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
   );
@@ -71,12 +73,10 @@ userSchema.methods.generateAccessToken = function () {
 userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
-      // payload
       _id: this._id,
-    }, // secret key
+    },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      // token expiry time
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
     }
   );
@@ -89,4 +89,3 @@ userSchema.pre("save", async function (next) {
 });
 
 export const User = mongoose.model("User", userSchema);
-// mongoDB will create a collection named "users" based on the model name "User"

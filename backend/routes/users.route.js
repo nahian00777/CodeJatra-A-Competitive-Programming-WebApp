@@ -10,6 +10,8 @@ import {
   updateAccountDetails,
   updateUserAvatar,
   getAllUsers,
+  updateUserActivity,
+  getOnlineUsers,
 } from "../controllers/users.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -49,5 +51,9 @@ userRouter
   .patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
 
 userRouter.route("/getAllUsers").get(getAllUsers);
+
+userRouter.route("/updateActivity").post(verifyJWT, updateUserActivity);
+
+userRouter.route("/getOnlineUsers").get(getOnlineUsers);
 
 export default userRouter;

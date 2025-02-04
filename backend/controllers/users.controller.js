@@ -386,6 +386,30 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Cover image updated successfully"));
 });
 
+// Update user activity
+const updateUserActivity = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    await User.findByIdAndUpdate(userId, { lastActive: new Date() });
+    res.status(200).json(new ApiResponse(200, {}, "Activity updated"));
+  } catch (error) {
+    throw new ApiError(500, "Error updating activity");
+  }
+});
+
+// Get online users
+const getOnlineUsers = asyncHandler(async (req, res) => {
+  const fiveMinutesAgo = new Date(Date.now() - 30000);
+  const onlineUsers = await User.find({
+    lastActive: { $gte: fiveMinutesAgo },
+  }).select("-password -refreshToken -avatar -email");
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, onlineUsers, "Online users fetched successfully")
+    );
+});
+
 export {
   registerUser,
   loginUser,
@@ -396,4 +420,6 @@ export {
   updateAccountDetails,
   updateUserAvatar,
   getAllUsers,
+  updateUserActivity,
+  getOnlineUsers,
 };

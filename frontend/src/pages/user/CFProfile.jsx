@@ -28,7 +28,7 @@ function CFProfile() {
   useEffect(() => {
     const fetchRatingHistory = asyncHandler(async () => {
 
-      console.log( "fetchRatingHistory executed " +handle);
+      // console.log( "fetchRatingHistory executed " +handle);
 
       const response = await axios.get(
         "http://localhost:3000/api/v1/problems/fetchRatingHistory",
@@ -47,7 +47,7 @@ function CFProfile() {
   useEffect(() => {
     const fetchSubmissionStats = asyncHandler(async () => {
 
-      console.log( "fetchSubmissionStats executed " +handle);
+      // console.log( "fetchSubmissionStats executed " +handle);
 
       const response = await axios.get(
         "http://localhost:3000/api/v1/problems/fetchSubmissionStats",
@@ -74,7 +74,7 @@ function CFProfile() {
         }
       );
       setsolvedRatings(response.data);
-      console.log("Solved Ratings:", response.data);
+      // console.log("Solved Ratings:", response.data);
     });
 
     fetchRatingCount();

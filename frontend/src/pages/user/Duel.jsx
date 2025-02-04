@@ -43,12 +43,32 @@ function Duel() {
   const [showMatchmaking, setShowMatchmaking] = useState(false);
   const [selectedDuel, setSelectedDuel] = useState(null);
   const dispatch = useDispatch();
-  dispatch(setUsername("Brinto")); // sets the new name and delete it when log in page is up and running
-  dispatch(setHandle("-is-this-dft_")); // sets the new name and delete it when log in page is up and running
+  dispatch(setUsername("Brinto")); // Temporary setup
+  dispatch(setHandle("-is-this-dft_")); // Temporary setup
+
+  useEffect(() => {
+    const updateActivity = async () => {
+      try {
+        await axios.post(
+          "http://localhost:3000/api/v1/users/updateActivity",
+          {},
+          {
+            withCredentials: true, // Ensure cookies are sent
+          }
+        );
+        console.log("Activity updated");
+      } catch (error) {
+        console.error("Error updating activity:", error);
+      }
+    };
+
+    const interval = setInterval(updateActivity, 10000); // Update every 2 minutes
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   useEffect(() => {
     const fetchProblems = async () => {
-      const handle = "-is-this-dft_"; // sets the new name and delete it when log in page is up and running
+      const handle = "-is-this-dft_"; // Temporary setup
       // try {
       //     await axios.post("http://localhost:3000/api/v1/problems/fetchProblems", {
       //       handle

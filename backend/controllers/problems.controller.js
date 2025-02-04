@@ -29,7 +29,7 @@ const fetchProblems = asyncHandler(async (req, res) => {
   );
   const responses = APIresponse.data.result;
 
-  console.log(`Fetched ${responses.length} problems from Codeforces`);
+  // console.log(`Fetched ${responses.length} problems from Codeforces`);
 
   let insertedCount = 0;
   let updatedcnt = 0;
@@ -157,7 +157,7 @@ const fetchSubmissionStats = asyncHandler(async (req, res) => {
     })
   );
 
-  console.log("Verdict Countsasfadf:", verdictCounts);
+  // console.log("Verdict Countsasfadf:", verdictCounts);
 
   return res.status(200).json(verdictCounts);
 });
@@ -182,7 +182,7 @@ const fetchRatingCount = asyncHandler(async (req, res) => {
     count: parseInt(value, 10), // Ensure the value is a number
   }));
 
-  console.log("Verdict Count:", ratingCounts);
+  // console.log("Verdict Count:", ratingCounts);
 
   return res.status(200).json(ratingCounts);
 });
@@ -193,7 +193,7 @@ const fetchRatingHistory = asyncHandler(async (req, res) => {
   // 1. Get the handle from the request body
   const { handle } = req.query;
 
-  console.log("fetching rating history of " + handle);
+  // console.log("fetching rating history of " + handle);
 
   // 2. Fetch the user's rating history from Codeforces API
   const APIresponse = await axios.get(
@@ -201,7 +201,7 @@ const fetchRatingHistory = asyncHandler(async (req, res) => {
   );
   const responses = APIresponse.data.result;
 
-  console.log(`Fetched ${responses.length} contest history from Codeforces`);
+  // console.log(`Fetched ${responses.length} contest history from Codeforces`);
 
   let insertedCount = 0;
 

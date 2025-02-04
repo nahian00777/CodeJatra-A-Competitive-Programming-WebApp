@@ -18,7 +18,7 @@ const DuelMatchmaking = ({ onClose }) => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/v1/users/getAllUsers"
+          "http://localhost:3000/api/v1/users/getOnlineUsers"
         );
         if (response.data.success) {
           setUsers(response.data.data);
