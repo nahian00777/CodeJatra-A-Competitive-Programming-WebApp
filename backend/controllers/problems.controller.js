@@ -84,11 +84,14 @@ const fetchProblems = asyncHandler(async (req, res) => {
   }
 
   console.log(`Total inserted problems: ${insertedCount}`);
-  // console.log(verditCounts);
+  console.log(ratingCounts);
 
   const result = await User.findOneAndUpdate(
     { handle: handle }, // Find the user by their unique ID
-    { verdictHistory: verditCounts }, // Update the verdictHistory field
+    { 
+      verdictHistory: verditCounts,
+      problemRatings: ratingCounts
+    }, // Update the verdictHistory field
     { new: true } // Return the updated document
   );
   if(result){
@@ -142,6 +145,15 @@ const fetchSubmissionStats = asyncHandler(async (req, res) => {
 
 ///// get the number of ratings
 const fetchRatingCount = asyncHandler(async (req, res) => {
+  const { handle } = req.query;
+  const user = await User.findOne({ handle: handle });
+  
+  const data = Array.from(user.problemRatings.entries()).map(([key, value]) => ({
+    rating: key,
+    count: value
+  }));
+  
+  return res.status(200).json(data);
 });
 
 ///// get the rating history for line chart

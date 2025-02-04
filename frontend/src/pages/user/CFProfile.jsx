@@ -56,7 +56,7 @@ function CFProfile() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(response.data)
+      // console.log(response.data)
       setsubmissionStats(response.data);
     });
 

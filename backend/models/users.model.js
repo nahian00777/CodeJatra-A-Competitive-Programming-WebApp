@@ -44,12 +44,11 @@ const userSchema = new mongoose.Schema(
     //     date: { type: Date, default: Date.now },
     //   },
     // ],
-    ratingHistory: [
-      {
-        rating: { type: Number, default: 1500 },
-        date: { type: Date, default: Date.now },
-      },
-    ],
+    problemRatings: {
+      type: Map,
+      of: Number,
+      default: {}, // Default to an empty map
+    },
     verdictHistory: {
       Accepted: { type: Number, default: 0 },
       WRONG_ANSWER: { type: Number, default: 0 },
