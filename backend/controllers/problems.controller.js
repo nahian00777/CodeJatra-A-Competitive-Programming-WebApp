@@ -9,7 +9,7 @@ const fetchProblems = asyncHandler(async (req, res) => {
 
   // 2. Fetch the user's solved problems from Codeforces API
   const APIresponse = await axios.get(
-    `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=100000`
+    `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=10000`
   );
   const responses = APIresponse.data.result;
 
@@ -22,6 +22,14 @@ const fetchProblems = asyncHandler(async (req, res) => {
     const { contestId, index, name, rating } = response.problem;
     const solver = handle;
     const solved = response.verdict === "OK";
+
+    // Check if contestId length > 4 and rating is not defined
+    if (String(contestId).length > 4) {
+      console.log(
+        `Skipping problem from contestId: ${contestId} due to invalid data.`
+      );
+      continue; // Skip this iteration if the conditions are met
+    }
 
     // Check if the problem already exists
     const existingProblem = await Problems.findOne({
@@ -60,40 +68,69 @@ const fetchProblems = asyncHandler(async (req, res) => {
   );
 });
 
+const deleteProblems = asyncHandler(async (req, res) => {
+  try {
+    // Deleting problems where contestId length > 4 or rating is not defined
+    const result = await Problems.deleteMany({
+      $or: [
+        { $expr: { $gt: [{ $strLenCP: "$contestId" }, 4] } }, // contestId length > 4
+        { rating: { $exists: false } }, // rating not defined
+      ],
+    });
+
+    console.log(`Deleted ${result.deletedCount} problems.`);
+
+    // Return a success response with the number of deleted problems
+    return res.status(200).json({
+      message: `${result.deletedCount} problems deleted successfully`,
+    });
+  } catch (error) {
+    console.error("Error deleting problems:", error);
+    return res.status(500).json({
+      message: "Error deleting problems",
+      error: error.message,
+    });
+  }
+});
 
 ///// get the count of verdicts
 
-
-
 ///// get the number of ratings
-
-
 
 ///// get the rating history
 
 const fetchRatingHistory = asyncHandler(async (req, res) => {
-    // 1. Get the handle from the request body
-    const { handle } = req.query;
+  // 1. Get the handle from the request body
+  const { handle } = req.query;
 
-    console.log("fetching rating history of " + handle);
+  console.log("fetching rating history of " + handle);
 
-    // 2. Fetch the user's rating history from Codeforces API
-    const APIresponse = await axios.get(`https://codeforces.com/api/user.rating?handle=${handle}`);
-    const responses = APIresponse.data.result;
+  // 2. Fetch the user's rating history from Codeforces API
+  const APIresponse = await axios.get(
+    `https://codeforces.com/api/user.rating?handle=${handle}`
+  );
+  const responses = APIresponse.data.result;
 
-    console.log(`Fetched ${responses.length} contest history from Codeforces`);
+  console.log(`Fetched ${responses.length} contest history from Codeforces`);
 
-    let insertedCount = 0;
+  let insertedCount = 0;
 
-    const formattedRatings = responses.map(response =>  {
-        const { contestId, contestName, rank, ratingUpdateTimeSeconds: date, oldRating, newRating } = response;
+  const formattedRatings = responses.map((response) => {
+    const {
+      contestId,
+      contestName,
+      rank,
+      ratingUpdateTimeSeconds: date,
+      oldRating,
+      newRating,
+    } = response;
 
-        const formattedDate = new Date(date * 1000).toLocaleDateString("en-GB"); // "DD/MM/YYYY"
+    const formattedDate = new Date(date * 1000).toLocaleDateString("en-GB"); // "DD/MM/YYYY"
 
-        return { date: formattedDate, newRating };
-    });
-    // 4. Return success response with rating history
-    return res.status(200).json(formattedRatings);
+    return { date: formattedDate, newRating };
+  });
+  // 4. Return success response with rating history
+  return res.status(200).json(formattedRatings);
 });
 
-export { fetchProblems, fetchRatingHistory };
+export { fetchProblems, fetchRatingHistory, deleteProblems};

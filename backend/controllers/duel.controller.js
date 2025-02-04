@@ -147,7 +147,7 @@ export const completeDuel = asyncHandler(async (req, res) => {
       user2SolvedTime = submission.creationTimeSeconds;
     }
   });
-  console.log(user1SolvedTime, user2SolvedTime);
+  // console.log(user1SolvedTime, user2SolvedTime);
   // Check if neither user has solved the problem
   if (!user1SolvedTime && !user2SolvedTime) {
     return res
@@ -194,9 +194,17 @@ export const completeDuel = asyncHandler(async (req, res) => {
   duel.endTime = new Date();
   await duel.save();
 
+  const winner = await User.findById(winnerId);
+
   return res
     .status(200)
-    .json(new ApiResponse(200, duel, "Winner determined successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        duel,
+        `${winner.handle} has won the duel successfully!`
+      )
+    );
 });
 
 export const getDuel = asyncHandler(async (req, res) => {

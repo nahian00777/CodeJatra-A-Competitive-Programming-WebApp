@@ -1,4 +1,4 @@
-import React, { act, useState, useEffect} from "react";
+import React, { act, useState, useEffect } from "react";
 import {
   PlayCircle,
   Swords,
@@ -12,8 +12,8 @@ import axios from "axios";
 import DuelMatchmaking from "../../components/DuelMatchmaking";
 import DuelDetails from "../../components/DuelDetails";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux'; // sets the new name
-import { setUsername, setHandle } from '../../redux/userSlice.jsx'; // importing this only to set the name! delete this when log in page is up and running
+import { useDispatch } from "react-redux"; // sets the new name
+import { setUsername, setHandle } from "../../redux/userSlice.jsx"; // importing this only to set the name! delete this when log in page is up and running
 
 const DuelCard = ({ title, children }) => (
   <div className=" dark:bg-gray-800 rounded-xl p-6 shadow-sm">
@@ -43,30 +43,26 @@ function Duel() {
   const [showMatchmaking, setShowMatchmaking] = useState(false);
   const [selectedDuel, setSelectedDuel] = useState(null);
   const dispatch = useDispatch();
-  dispatch(setUsername('Brinto')); // sets the new name and delete it when log in page is up and running
-  dispatch(setHandle('-is-this-dft_')); // sets the new name and delete it when log in page is up and running
+  dispatch(setUsername("Brinto")); // sets the new name and delete it when log in page is up and running
+  dispatch(setHandle("-is-this-dft_")); // sets the new name and delete it when log in page is up and running
 
   useEffect(() => {
     const fetchProblems = async () => {
-
-      const handle = '-is-this-dft_';	
-        try {
-            await axios.post("http://localhost:3000/api/v1/problems/fetchProblems", {
-              handle
-            }, {
-              headers: { "Content-Type": "application/json" }
-            });
-            console.log("fetching problem data script executed");
-        } catch (error) {
-            console.error("Error running fetching problem data: ", error);
-        }
+      const handle = "-is-this-dft_"; // sets the new name and delete it when log in page is up and running
+      // try {
+      //     await axios.post("http://localhost:3000/api/v1/problems/fetchProblems", {
+      //       handle
+      //     }, {
+      //       headers: { "Content-Type": "application/json" }
+      //     });
+      //     console.log("fetching problem data script executed");
+      // } catch (error) {
+      //     console.error("Error running fetching problem data: ", error);
+      // }
     };
 
     fetchProblems();
-}, []);
-
-
-
+  }, []);
 
   const stats = {
     totalDuels: 48,

@@ -1,11 +1,25 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const DuelRoom = ({ onClose, problemUrl, opponent }) => {
+const DuelRoom = ({ onClose }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const [isWinner, setIsWinner] = useState(false); // Track if the user won
+  const [showToast, setShowToast] = useState(false); // Control toast visibility
+
+  // Retrieve duel data from Redux store
+  const duelData = useSelector((state) => state.user.duelData);
+
+  // Extract necessary information from duelData
+  const problemUrl = duelData
+    ? `https://codeforces.com/problemset/problem/${duelData.problem.contestId}/${duelData.problem.index}`
+    : "#";
+  const opponent = duelData
+    ? duelData.user2[0]
+    : { name: "Unknown", rating: "N/A" };
 
   // Handle closing the duel room
   const handleCloseAndNavigate = () => {
@@ -17,21 +31,45 @@ const DuelRoom = ({ onClose, problemUrl, opponent }) => {
   const handleSubmitSolution = async () => {
     setIsSubmitting(true);
     setMessage("");
+    setShowToast(false);
 
     try {
-      const response = await fetch("/check-winner", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playerHandle: "your_handle",
-          problemId: "1234A",
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/v1/duel/completeDuel/${duelData._id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
-      const data = await response.json();
-      setMessage(data.message);
+      if (response.ok) {
+        const data = await response.json();
+        setMessage(data.message);
+        setShowToast(true); // Show toast notification
+
+        // Check if the current user is the winner
+        if (data.message.includes("You win")) {
+          setIsWinner(true);
+        }
+
+        // Hide toast after 3 seconds
+        setTimeout(() => {
+          setShowToast(false);
+        }, 3000);
+      } else {
+        const errorData = await response.json();
+        setMessage(errorData.message || "Error completing duel.");
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 3000);
+      }
     } catch (error) {
       setMessage("Error submitting solution. Please try again.");
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
     } finally {
       setIsSubmitting(false);
     }
@@ -63,7 +101,7 @@ const DuelRoom = ({ onClose, problemUrl, opponent }) => {
           </p>
 
           <a
-            href={problemUrl || "#"}
+            href={problemUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="block px-4 py-2 bg-blue-600 text-white rounded-lg text-center hover:bg-blue-700 mb-4"
@@ -75,7 +113,7 @@ const DuelRoom = ({ onClose, problemUrl, opponent }) => {
             Opponent
           </h4>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {opponent?.name || "Unknown"} ({opponent?.rating || "N/A"})
+            {opponent.name} ({opponent.rating})
           </p>
         </div>
 
@@ -91,8 +129,29 @@ const DuelRoom = ({ onClose, problemUrl, opponent }) => {
 
           {/* Submission Status */}
           {message && <p className="mt-4 text-sm text-gray-200">{message}</p>}
+
+          {/* Winner GIF */}
+          {isWinner && (
+            <div className="mt-6 text-center">
+              <h3 className="text-xl font-semibold text-green-600">
+                Congratulations, You Won!
+              </h3>
+              <img
+                src="https://media.giphy.com/media/3o6Zt0LC2X7Do4nDBK/giphy.gif" // Example GIF
+                alt="Winner GIF"
+                className="mx-auto mt-4 w-36"
+              />
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-lg shadow-lg max-w-xs w-full z-50 opacity-100 transition-opacity duration-300 ease-in-out">
+          <p>{message}</p>
+        </div>
+      )}
     </div>
   );
 };
