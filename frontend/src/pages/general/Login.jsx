@@ -3,6 +3,9 @@ import "./login.css";
 import myImage from "../../assets/images/panda1.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+// import { setUsername1, setHandle1 } from "../../redux/userSlice.jsx";
+// import { setUsername1, setHandle1 } from "../../redux/userSlice";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -10,6 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const showAlert = (message) => {
     if (message) {
@@ -27,10 +31,14 @@ const Login = () => {
       );
 
       if (response.status === 200) {
+        // console.log(response.data.data.user.username);
+        const username1 = response.data.data.user.username;
+        const handle1 = response.data.data.user.handle;
+        // dispatch(setUsername1(String(username1)));
+        // dispatch(setHandle1(String(handle1)));
         setAlertMessage("Login successful");
         showAlert("Login successful");
-
-        console.log(handle);
+        // console.log(handle);
         // try {
         //   await axios.post("http://localhost:3000/api/v1/problems/fetchProblems", {
         //     handle
@@ -48,7 +56,8 @@ const Login = () => {
         showAlert("Login failed");
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Username Or Password Not Correct";
+      const errorMessage =
+        error.response?.data?.message || "Username Or Password Not Correct";
       setAlertMessage(errorMessage);
       showAlert(errorMessage);
       console.error("Error logging in:", error);

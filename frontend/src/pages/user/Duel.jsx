@@ -45,8 +45,8 @@ function Duel() {
   const [selectedDuel, setSelectedDuel] = useState(null);
   const [duelRequests, setDuelRequests] = useState([]);
   const dispatch = useDispatch();
-  dispatch(setUsername("Brinto")); // Temporary setup
-  dispatch(setHandle("-is-this-dft_")); // Temporary setup
+  // dispatch(setUsername("Brinto")); // Temporary setup
+  // dispatch(setHandle("-is-this-dft_")); // Temporary setup
 
   useEffect(() => {
     const fetchDuelRequests = async () => {
@@ -94,16 +94,24 @@ function Duel() {
 
   useEffect(() => {
     const fetchProblems = async () => {
-      const handle = "-is-this-dft_"; // Temporary setup
+      const handle = localStorage.getItem("handle");
+      console.log(
+        "fetching problem data script executed with handle: ",
+        handle
+      );
       try {
-          await axios.post("http://localhost:3000/api/v1/problems/fetchProblems", {
-            handle
-          }, {
-            headers: { "Content-Type": "application/json" }
-          });
-          console.log("fetching problem data script executed");
+        await axios.post(
+          "http://localhost:3000/api/v1/problems/fetchProblems",
+          {
+            handle,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        console.log("fetching problem data script executed");
       } catch (error) {
-          console.error("Error running fetching problem data: ", error);
+        console.error("Error running fetching problem data: ", error);
       }
     };
 
