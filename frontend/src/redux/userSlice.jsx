@@ -13,6 +13,13 @@ const userSlice = createSlice({
   name: "user", // Name of the slice
   initialState, // Initial state
   reducers: {
+    clearUserData: (state) => {
+      state.username = "";
+      state.handle = "";
+      localStorage.removeItem("username");
+      localStorage.removeItem("handle");
+      localStorage.removeItem("darkMode");
+    },
     setDuelData: (state, action) => {
       state.duelData = action.payload;
       localStorage.setItem("duelData", JSON.stringify(action.payload));
@@ -44,7 +51,7 @@ const userSlice = createSlice({
 });
 
 // Export the actions (setUsername, logout, and toggleDarkMode)
-export const { setUsername, setHandle, logout, toggleDarkMode, setDuelData } =
+export const { setUsername, setHandle, logout, toggleDarkMode, setDuelData, clearUserData } =
   userSlice.actions;
 
 // Export the reducer

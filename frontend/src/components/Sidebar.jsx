@@ -13,9 +13,9 @@ import {
   Home,
   LogOut,
 } from "lucide-react";
-import { useSelector, useDispatch } from 'react-redux';
-import {logout, toggleDarkMode } from '../redux/userSlice.jsx';
-
+import { useSelector, useDispatch } from "react-redux";
+import { logout, toggleDarkMode } from "../redux/userSlice.jsx";
+import { clearUserData } from "../redux/userSlice.jsx";
 
 const NavItem = ({ icon, text, collapsed, onClick, isActive }) => (
   <button
@@ -40,16 +40,37 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeItem, setActiveItem] = useState("dashboard"); // Set the initial active item
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleNavigation = (path, item) => {
     setActiveItem(item); // Update active item when navigating
     navigate(path); // Navigate to the page
   };
 
-  const handleLogout = () => {
-    // Handle logout logic here
-    console.log("User logged out");
-    navigate("/"); // Redirect to the login page
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/v1/users/logout",
+        {
+          method: "POST",
+          credentials: "include", // Include cookies if needed
+        }
+      );
+
+      if (response.ok) {
+        console.log("User logged out");
+        // Clear the user data from the Redux store
+        dispatch(clearUserData());
+        // Redirect to the login page
+        navigate("/");
+      } else {
+        console.error("Failed to log out");
+        // Handle error if needed
+      }
+    } catch (error) {
+      console.error("An error occurred during logout:", error);
+      // Handle error if needed
+    }
   };
 
   return (

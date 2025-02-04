@@ -74,7 +74,7 @@ export default function LandingPage() {
                 </a>
               </li>
               <li className="nav-item">
-              <Link to='/login' href="LogIn.php" className="btn btn-brand ms-auto">
+              <Link to='/register' href="LogIn.php" className="btn btn-brand ms-auto">
               Join Us
               </Link>
               </li>
@@ -101,7 +101,7 @@ export default function LandingPage() {
                   GET STARTED
                 </a> */}
                 {/* // Replace the existing button with the following: */}
-                <Link to="/user/duel" className="btn btn-brand me-2">
+                <Link to="login" className="btn btn-brand me-2">
                   GET STARTED
                 </Link>
                 <a href="#services" class="btn btn-light ms-2">
