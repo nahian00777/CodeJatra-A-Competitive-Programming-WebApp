@@ -67,8 +67,8 @@ export const createDuel = asyncHandler(async (req, res) => {
       contestId: selectedProblem.contestId,
       index: selectedProblem.index,
     },
-    status: "ongoing",
-    startTime: new Date(),
+    status: "waiting",
+    startTime: null,
   });
 
   return res
@@ -85,7 +85,7 @@ export const dropDuel = asyncHandler(async (req, res) => {
   // Find and delete the duel
   const duel = await Duel.findByIdAndDelete(duelId);
 
-  console.log(duel);
+  // console.log(duel);
   if (!duel) {
     throw new ApiError(404, "Duel not found");
   }
@@ -236,4 +236,80 @@ export const getDuel = asyncHandler(async (req, res) => {
       "Duel status retrieved successfully"
     )
   );
+});
+
+export const acceptDuel = asyncHandler(async (req, res) => {
+  const { duelId } = req.params;
+
+  // Fetch the duel
+  const duel = await Duel.findById(duelId);
+  if (!duel) {
+    throw new ApiError(404, "Duel not found");
+  }
+
+  // Check if the duel is in the waiting state
+  if (duel.status !== "waiting") {
+    throw new ApiError(400, "Duel is not in a state to be accepted");
+  }
+
+  // Update the duel status to ongoing
+  duel.status = "ongoing";
+  duel.startTime = new Date();
+  await duel.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, duel, "Duel accepted successfully"));
+});
+
+export const listUserDuels = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  // Fetch all duels for the user
+  const duels = await Duel.find({
+    $or: [{ user1: userId }, { user2: userId }],
+  }).populate("user1 user2");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, duels, "User duels retrieved successfully"));
+});
+
+export const cancelDuel = asyncHandler(async (req, res) => {
+  const { duelId } = req.params;
+
+  // Fetch the duel
+  const duel = await Duel.findById(duelId);
+  if (!duel) {
+    throw new ApiError(404, "Duel not found");
+  }
+
+  // Check if the duel is in the waiting state
+  if (duel.status !== "waiting") {
+    throw new ApiError(400, "Duel cannot be canceled");
+  }
+
+  // Delete the duel
+  await duel.remove();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Duel canceled successfully"));
+});
+
+// Check for new duel requests
+export const checkNewDuels = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  // Find duels where the current user is user2 and the status is "waiting"
+  const newDuels = await Duel.find({
+    user2: userId,
+    status: "waiting",
+  }).populate("user1", "username");
+
+  if (!newDuels.length) {
+    return res.status(200).json(new ApiResponse(200, [], "No new duel requests"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, newDuels, "New duel requests fetched successfully"));
 });

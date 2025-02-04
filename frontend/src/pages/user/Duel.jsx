@@ -13,7 +13,8 @@ import DuelMatchmaking from "../../components/DuelMatchmaking";
 import DuelDetails from "../../components/DuelDetails";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux"; // sets the new name
-import { setUsername, setHandle } from "../../redux/userSlice.jsx"; // importing this only to set the name! delete this when log in page is up and running
+import { setUsername, setHandle } from "../../redux/userSlice.jsx";
+import { toast } from "react-toastify";
 
 const DuelCard = ({ title, children }) => (
   <div className=" dark:bg-gray-800 rounded-xl p-6 shadow-sm">
@@ -42,11 +43,36 @@ function Duel() {
   const [isSearching, setIsSearching] = useState(false);
   const [showMatchmaking, setShowMatchmaking] = useState(false);
   const [selectedDuel, setSelectedDuel] = useState(null);
+  const [duelRequests, setDuelRequests] = useState([]);
   const dispatch = useDispatch();
   dispatch(setUsername("Brinto")); // Temporary setup
   dispatch(setHandle("-is-this-dft_")); // Temporary setup
 
   useEffect(() => {
+    const fetchDuelRequests = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/v1/duel/checkNew",
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.data.success) {
+          const newRequests = response.data.data;
+          setDuelRequests(newRequests);
+          // console.log(newRequests.length);
+          newRequests.forEach((request) => {
+            toast.info(`New duel request from ${request.user1.username}`);
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching duel requests:", error);
+      }
+    };
+
+    const intervalDuel = setInterval(fetchDuelRequests, 10000); // Fetch every 10 seconds
+
     const updateActivity = async () => {
       try {
         await axios.post(
@@ -63,7 +89,7 @@ function Duel() {
     };
 
     const interval = setInterval(updateActivity, 10000); // Update every 2 minutes
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval({ interval, intervalDuel }); // Cleanup on unmount
   }, []);
 
   useEffect(() => {

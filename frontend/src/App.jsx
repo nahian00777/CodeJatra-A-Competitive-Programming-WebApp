@@ -18,7 +18,7 @@ import OngoingChallenge from "./pages/user/OngoingChallenge";
 import Chat from "./components/chat";
 import LoginPage from "./pages/general/Login";
 import RegisterPage from "./pages/general/register";
-
+import { ToastContainer } from "react-toastify";
 
 function AppContent() {
   return (

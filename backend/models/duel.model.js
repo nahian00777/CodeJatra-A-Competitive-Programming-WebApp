@@ -13,6 +13,10 @@ const duelSchema = new mongoose.Schema(
       enum: ["waiting", "ongoing", "finished"],
       default: "waiting",
     },
+    invitationAccepted: {
+      type: Boolean,
+      default: false,
+    },
     winner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     startTime: Date,
     endTime: Date,
