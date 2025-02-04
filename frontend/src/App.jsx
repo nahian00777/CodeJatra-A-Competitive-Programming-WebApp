@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store"; // Import the Redux store
 import LandingPage from "./pages/general/LandingPage";
+
 import DashBoard from "./pages/user/DashBoard";
 import IUPCDetails from "./pages/user/IUPCDetails";
 import Duel from "./pages/user/Duel";
@@ -15,14 +16,17 @@ import ContestDetails from "./pages/user/ContestDetails";
 import Topbar from "./components/Topbar";
 import OngoingChallenge from "./pages/user/OngoingChallenge";
 import Chat from "./components/chat";
-import LoginPage from "./pages/general/dummyLogin";
+import LoginPage from "./pages/general/Login";
+import RegisterPage from "./pages/general/register";
+
 
 function AppContent() {
   return (
     <Routes>
       {/* Landing page route */}
       <Route path="/" element={<LandingPage />} />
-
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
       {/* Group routes for user-related pages */}
       <Route
         path="/user/*"

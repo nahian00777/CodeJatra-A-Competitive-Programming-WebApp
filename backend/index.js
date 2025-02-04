@@ -13,3 +13,6 @@ connectDB()
   .catch((error) => {
     console.log("Error in connecting to database: ", error);
   });
+
+
+  

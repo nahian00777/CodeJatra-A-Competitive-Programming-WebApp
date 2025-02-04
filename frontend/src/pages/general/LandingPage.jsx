@@ -1,5 +1,6 @@
 import React from "react";
-// import 'bootstrap/dist/css/bootstrap.min.css';
+  // import 'bootstrap/dist/css/bootstrap.min.css';
+// import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "../../styles/mystyle.css";
 import myImage from "../../assets/images/LOGOBRIGHT.jpg";
 import group_ from "../../assets/images/group_.jpg";
@@ -40,7 +41,7 @@ export default function LandingPage() {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
+          <div className=" " id="navbarNav">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
                 <a className="nav-link" href="#hero">
@@ -72,10 +73,13 @@ export default function LandingPage() {
                   Contact
                 </a>
               </li>
-            </ul>
-            <a href="LogIn.php" className="btn btn-brand ms-lg-3">
+              <li className="nav-item">
+              <Link to='/login' href="LogIn.php" className="btn btn-brand ms-auto">
               Join Us
-            </a>
+              </Link>
+              </li>
+            </ul>
+            
           </div>
         </div>
       </nav>
