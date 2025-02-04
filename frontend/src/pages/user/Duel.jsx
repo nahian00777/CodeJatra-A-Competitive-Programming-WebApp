@@ -44,6 +44,8 @@ function Duel() {
   const [showMatchmaking, setShowMatchmaking] = useState(false);
   const [selectedDuel, setSelectedDuel] = useState(null);
   const [duelRequests, setDuelRequests] = useState([]);
+  const [duelStat, setduelStat] = useState([]);
+
 
   const userName = useSelector((state) => state.user.username);
   const handle = useSelector((state) => state.user.handle);
@@ -117,6 +119,29 @@ function Duel() {
     fetchProblems();
   }, []);
 
+
+  useEffect(() => {
+    const fetchDuelStats = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/duel/fetchDuelStats`, // URL
+          {
+            params: { handle }, // Query parameters
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        console.log("Duel stats:", response.data);
+        // Handle the response data as needed
+        setduelStat(response.data);
+      } catch (error) {
+        console.error("Error fetching duel stats: ", error);
+      }
+    };
+
+    fetchDuelStats();
+  }, []);
+
   const stats = {
     totalDuels: 48,
     wins: 32,
@@ -181,11 +206,10 @@ function Duel() {
             onClick={() => setShowMatchmaking(true)}
             disabled={isSearching}
             className={`px-6 py-3 mx-5 rounded-lg flex items-center gap-2 text-white font-medium transition-all
-            ${
-              isSearching
+            ${isSearching
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
-            }`}
+              }`}
           >
             <Swords className="w-5 h-5" />
             {isSearching ? "Searching..." : "Start Duel"}
@@ -212,7 +236,7 @@ function Duel() {
               label="Total Duels"
               value={stats.totalDuels}
             />
-            <StatItem icon={Trophy} label="Wins" value={stats.wins} />
+            <StatItem icon={Trophy} label="Wins" value={duelStat.duelWon} />
             <StatItem
               icon={Target}
               label="Win Rate"
@@ -221,7 +245,7 @@ function Duel() {
             <StatItem
               icon={Timer}
               label="Current Streak"
-              value={stats.currentStreak}
+              value={duelStat.streak}
             />
           </div>
         </DuelCard>
@@ -298,9 +322,8 @@ function Duel() {
               </div>
               <div className="flex items-center gap-4">
                 <span
-                  className={`font-medium ${
-                    duel.result === "Won" ? "text-green-500" : "text-red-500"
-                  }`}
+                  className={`font-medium ${duel.result === "Won" ? "text-green-500" : "text-red-500"
+                    }`}
                 >
                   {duel.result}
                 </span>

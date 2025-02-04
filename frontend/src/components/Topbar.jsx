@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Bell, User, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
-
+import axios from "axios";
 
 const Topbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [Rating, setRating] = useState(0);
   const navigate = useNavigate();
 
   const notifications = [
@@ -15,6 +16,31 @@ const Topbar = () => {
   ];
 
   const userName = useSelector((state) => state.user.username); // Get the username from Redux store
+  const handle = useSelector((state) => state.user.handle); // Get the handle from Redux store
+
+  useEffect(() => {
+    const fetchDuelStats = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/duel/fetchDuelStats`, // URL
+          {
+            params: { handle }, // Query parameters
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        console.log("Duel stats:", response.data);
+        // Handle the response data as needed
+        // setduelStat(response.data);
+        setRating(response.data.currentDuelRating);
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching duel stats: ", error);
+      }
+    };
+
+    fetchDuelStats();
+  }, []);
   
   return (
     <div className="h-16 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-gray-800 dark:to-gray-900 px-6 flex items-center justify-between">
@@ -79,7 +105,7 @@ const Topbar = () => {
           <div className="flex flex-col items-start">
             <span className="text-sm font-medium text-white"> {userName}</span>
             <span className="text-xs text-blue-200 dark:text-gray-400">
-              Rating: 1850
+              Rating: {Rating}
             </span>
           </div>
         </button>

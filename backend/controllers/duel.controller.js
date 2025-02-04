@@ -313,3 +313,22 @@ export const checkNewDuels = asyncHandler(async (req, res) => {
 
   return res.status(200).json(new ApiResponse(200, newDuels, "New duel requests fetched successfully"));
 });
+
+
+// get the duel statistics of a user
+export const fetchDuelStats = asyncHandler(async (req, res) => {
+  const { handle } = req.query;
+  console.log("fetching duel stats for" + handle);
+  const user = await User.findOne({ handle: handle });
+  console.log(user.verdictHistory);
+
+  const data = {
+    streak: user.currentStreak,
+    duelWon: user.duelWon,
+    currentDuelRating: user.currentDuelRating,
+  }
+
+  console.log(data);
+
+  return res.status(200).json(data);
+});

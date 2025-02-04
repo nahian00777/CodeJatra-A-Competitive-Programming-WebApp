@@ -20,9 +20,36 @@ const colors = ["#4CAF50", "#2196F3", "#00BCD4", "#9C27B0", "#E91E63"];
 function CFProfile() {
   const username = useSelector((state) => state.user.username);
   const handle = useSelector((state) => state.user.handle);
+
+  
   const [codeforcesRatingHistory, setCodeforcesRatingHistory] = useState([]);
   const [submissionStats, setsubmissionStats] = useState([]);
   const [solvedRatings, setsolvedRatings] = useState([]);
+  const [Rating, setRating] = useState(0);
+
+  useEffect(() => {
+    const fetchDuelStats = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/duel/fetchDuelStats`, // URL
+          {
+            params: { handle }, // Query parameters
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        console.log("Duel stats:", response.data);
+        // Handle the response data as needed
+        // setduelStat(response.data);
+        setRating(response.data.currentDuelRating);
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching duel stats: ", error);
+      }
+    };
+
+    fetchDuelStats();
+  }, []);
 
 
   useEffect(() => {
@@ -95,7 +122,7 @@ function CFProfile() {
         </div>
         <h1 className="text-3xl text-gray-400 font-bold mb-2">{username}</h1>
         <p className="text-gray-400 mb-1">{handle}</p>
-        <p className="text-xl font-semibold text-blue-600">Duel Rating: 1350</p>
+        <p className="text-xl font-semibold text-blue-600">Duel Rating: {Rating}</p>
       </div>
 
       {/* Dual Rating Section */}
