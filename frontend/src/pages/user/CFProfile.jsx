@@ -15,12 +15,6 @@ const duelRatingHistory = [
   { date: '2023-05', rating: 1350 },
 ];
 
-const submissionStats = [
-  { name: 'Accepted', value: 150, color: '#4CAF50' },
-  { name: 'Wrong Answer', value: 50, color: '#F44336' },
-  { name: 'Time Limit Exceeded', value: 20, color: '#FFC107' },
-];
-
 const solvedRatings = [
   { rating: '800-1000', count: 25 },
   { rating: '1000-1200', count: 35 },
@@ -28,14 +22,17 @@ const solvedRatings = [
   { rating: '1400-1600', count: 15 },
   { rating: '1600-1800', count: 10 },
 ];
+const colors = ["#4CAF50", "#2196F3", "#00BCD4", "#9C27B0", "#E91E63"];
 
 function CFProfile() {
   const username = useSelector((state) => state.user.username);
   const handle = useSelector((state) => state.user.handle);
   const [codeforcesRatingHistory, setCodeforcesRatingHistory] = useState([]);
-
+  const [submissionStats, setsubmissionStats] = useState([]);
   useEffect(() => {
     const fetchRatingHistory = asyncHandler(async () => {
+
+      console.log( "fetchRatingHistory executed " +handle);
 
       const response = await axios.get(
         "http://localhost:3000/api/v1/problems/fetchRatingHistory",
@@ -44,15 +41,30 @@ function CFProfile() {
           headers: { "Content-Type": "application/json" },
         }
       );
-
-      // Store the formatted data in state
       setCodeforcesRatingHistory(response.data);
-
-      console.log("Fetching problem data script executed");
-      console.log(codeforcesRatingHistory)
     });
 
     fetchRatingHistory();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchSubmissionStats = asyncHandler(async () => {
+
+      console.log( "fetchSubmissionStats executed " +handle);
+
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/problems/fetchSubmissionStats",
+        {
+          params: { handle }, // Pass the handle as a query parameter
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      setsubmissionStats(response.data);
+      console.log("Submission Stats:", response.data);
+    });
+
+    fetchSubmissionStats();
   }, []);
 
   
@@ -117,7 +129,7 @@ function CFProfile() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="rating" stroke="#2196F3" />
+            <Line type="monotone" dataKey="newRating" stroke="#2196F3" />
           </LineChart>
         </div>
         <div className="bg-gray-300 p-6 rounded-lg shadow-md flex flex-col items-center">
@@ -133,7 +145,7 @@ function CFProfile() {
               dataKey="value"
             >
               {submissionStats.map((entry, index) => (
-                <Cell key={index} fill={entry.color} />
+                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} /> // Assign color
               ))}
             </Pie>
             <Tooltip />
