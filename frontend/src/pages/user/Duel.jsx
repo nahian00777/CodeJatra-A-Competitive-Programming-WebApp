@@ -12,9 +12,9 @@ import axios from "axios";
 import DuelMatchmaking from "../../components/DuelMatchmaking";
 import DuelDetails from "../../components/DuelDetails";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux"; // sets the new name
-import { setUsername, setHandle } from "../../redux/userSlice.jsx";
 import { toast } from "react-toastify";
+import { useSelector } from 'react-redux';
+
 
 const DuelCard = ({ title, children }) => (
   <div className=" dark:bg-gray-800 rounded-xl p-6 shadow-sm">
@@ -44,9 +44,9 @@ function Duel() {
   const [showMatchmaking, setShowMatchmaking] = useState(false);
   const [selectedDuel, setSelectedDuel] = useState(null);
   const [duelRequests, setDuelRequests] = useState([]);
-  const dispatch = useDispatch();
-  // dispatch(setUsername("Brinto")); // Temporary setup
-  // dispatch(setHandle("-is-this-dft_")); // Temporary setup
+
+  const userName = useSelector((state) => state.user.username);
+  const handle = useSelector((state) => state.user.handle);
 
   useEffect(() => {
     const fetchDuelRequests = async () => {
@@ -94,7 +94,6 @@ function Duel() {
 
   useEffect(() => {
     const fetchProblems = async () => {
-      const handle = localStorage.getItem("handle");
       console.log(
         "fetching problem data script executed with handle: ",
         handle

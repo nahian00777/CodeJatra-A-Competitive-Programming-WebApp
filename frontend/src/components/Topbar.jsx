@@ -14,8 +14,8 @@ const Topbar = () => {
     { id: 3, message: "New contest starting soon", time: "3h ago" },
   ];
 
-  const userName = useSelector((state) => state.user.username);
-  const handle = useSelector((state) => state.user.handle);
+  const userName = useSelector((state) => state.user.username); // Get the username from Redux store
+  
   return (
     <div className="h-16 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-gray-800 dark:to-gray-900 px-6 flex items-center justify-between">
       {/* Search Section */}

@@ -52,8 +52,8 @@ const userSlice = createSlice({
 
 // Export the actions (setUsername, logout, and toggleDarkMode)
 export const {
-  setUsername,
-  setHandle,
+  setUsername1,
+  setHandle1,
   logout,
   toggleDarkMode,
   setDuelData,
