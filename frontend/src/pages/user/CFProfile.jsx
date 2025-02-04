@@ -1,8 +1,10 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import { Trophy, Users } from 'lucide-react';
 import { useSelector } from 'react-redux';
-
+import axios from 'axios';
+import { asyncHandler } from '../../../../backend/utils/AsyncHandler';
 
 // Mock data - replace with actual API data
 const duelRatingHistory = [
@@ -11,14 +13,6 @@ const duelRatingHistory = [
   { date: '2023-03', rating: 1300 },
   { date: '2023-04', rating: 1280 },
   { date: '2023-05', rating: 1350 },
-];
-
-const codeforcesRatingHistory = [
-  { date: '2023-01', rating: 1400 },
-  { date: '2023-02', rating: 1450 },
-  { date: '2023-03', rating: 1500 },
-  { date: '2023-04', rating: 1480 },
-  { date: '2023-05', rating: 1550 },
 ];
 
 const submissionStats = [
@@ -38,6 +32,30 @@ const solvedRatings = [
 function CFProfile() {
   const username = useSelector((state) => state.user.username);
   const handle = useSelector((state) => state.user.handle);
+  const [codeforcesRatingHistory, setCodeforcesRatingHistory] = useState([]);
+
+  useEffect(() => {
+    const fetchRatingHistory = asyncHandler(async () => {
+
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/problems/fetchRatingHistory",
+        {
+          params: { handle }, // Pass the handle as a query parameter
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      // Store the formatted data in state
+      setCodeforcesRatingHistory(response.data);
+
+      console.log("Fetching problem data script executed");
+      console.log(codeforcesRatingHistory)
+    });
+
+    fetchRatingHistory();
+  }, []);
+
+  
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">

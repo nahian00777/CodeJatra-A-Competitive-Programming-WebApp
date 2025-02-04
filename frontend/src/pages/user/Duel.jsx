@@ -47,7 +47,7 @@ function Duel() {
   dispatch(setHandle('-is-this-dft_')); // sets the new name and delete it when log in page is up and running
 
   useEffect(() => {
-    const runBackendScript = async () => {
+    const fetchProblems = async () => {
 
       const handle = '-is-this-dft_';	
         try {
@@ -62,7 +62,7 @@ function Duel() {
         }
     };
 
-    runBackendScript();
+    fetchProblems();
 }, []);
 
 

@@ -43,4 +43,40 @@ const fetchProblems = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, { message: `Inserted ${insertedCount} new problems.` }));
 });
 
-export { fetchProblems };
+
+///// get the count of verdicts
+
+
+
+///// get the number of ratings
+
+
+
+///// get the rating history
+
+const fetchRatingHistory = asyncHandler(async (req, res) => {
+    // 1. Get the handle from the request body
+    const { handle } = req.query;
+
+    console.log("fetching rating history of " + handle);
+
+    // 2. Fetch the user's rating history from Codeforces API
+    const APIresponse = await axios.get(`https://codeforces.com/api/user.rating?handle=${handle}`);
+    const responses = APIresponse.data.result;
+
+    console.log(`Fetched ${responses.length} contest history from Codeforces`);
+
+    let insertedCount = 0;
+
+    const formattedRatings = responses.map(response =>  {
+        const { contestId, contestName, rank, ratingUpdateTimeSeconds: date, oldRating, newRating } = response;
+
+        const formattedDate = new Date(date * 1000).toLocaleDateString("en-GB"); // "DD/MM/YYYY"
+
+        return { date: formattedDate, newRating };
+    });
+    // 4. Return success response with rating history
+    return res.status(200).json(formattedRatings);
+});
+
+export { fetchProblems, fetchRatingHistory };
