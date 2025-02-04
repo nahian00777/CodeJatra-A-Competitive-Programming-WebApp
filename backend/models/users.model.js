@@ -38,6 +38,25 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
     },
+    // duelRatingHistory: [
+    //   {
+    //     rating: { type: Number, required: true },
+    //     date: { type: Date, default: Date.now },
+    //   },
+    // ],
+    ratingHistory: [
+      {
+        rating: { type: Number, default: 1500 },
+        date: { type: Date, default: Date.now },
+      },
+    ],
+    verdictHistory: {
+      Accepted: { type: Number, default: 0 },
+      WRONG_ANSWER: { type: Number, default: 0 },
+      Others: { type: Number, default: 0 },
+      TIME_LIMIT_EXCEEDED: { type: Number, default: 0 },
+      MEMORY_LIMIT_EXCEEDED: { type: Number, default: 0 },
+    },
     refreshToken: {
       type: String,
     },

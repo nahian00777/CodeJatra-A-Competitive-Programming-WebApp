@@ -1,17 +1,9 @@
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { Problems } from "../models/problem.model.js";
+import { User } from "../models/users.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import axios from "axios";
-import redis from "redis";
 
-const client = redis.createClient({
-  host: "127.0.0.1", // Replace with your Redis host
-  port: 6379, // Replace with your Redis port
-});
-
-client.on("error", (err) => {
-  console.error("Redis error:", err);
-});
 
 const ratingCounts = {};
 const verditCounts = {};
@@ -20,16 +12,13 @@ const visited = new Set();
 const fetchProblems = asyncHandler(async (req, res) => {
   // 1. Get the handle from the request body
   const { handle } = req.body;
-
-  const redisKey = `user:${handle}`;
+  console.log("fetching problems of " + handle);
 
   // 2. Fetch the user's solved problems from Codeforces API
   const APIresponse = await axios.get(
     `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=10000`
   );
   const responses = APIresponse.data.result;
-
-  // console.log(`Fetched ${responses.length} problems from Codeforces`);
 
   let insertedCount = 0;
   let updatedcnt = 0;
@@ -40,13 +29,6 @@ const fetchProblems = asyncHandler(async (req, res) => {
     const solved = response.verdict === "OK";
 
     // Check if contestId length > 4 and rating is not defined
-    if (String(contestId).length > 4) {
-      console.log(
-        `Skipping problem from contestId: ${contestId} due to invalid data.`
-      );
-      continue; // Skip this iteration if the conditions are met
-    }
-
     // create map for verdicts
     if (response.verdict === "OK") {
       verditCounts["Accepted"] = (verditCounts["Accepted"] || 0) + 1;
@@ -66,6 +48,12 @@ const fetchProblems = asyncHandler(async (req, res) => {
       visited.add(name);
       ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
     }
+
+    // Skip this iteration if the conditions are met
+    if (!rating) {
+      continue; // Skip this iteration if the conditions are met
+    }
+
 
     // Check if the problem already exists
     const existingProblem = await Problems.findOne({
@@ -96,11 +84,16 @@ const fetchProblems = asyncHandler(async (req, res) => {
   }
 
   console.log(`Total inserted problems: ${insertedCount}`);
-  // Store ratingCounts and verdictCounts
-  await client.hSet(redisKey, {
-    ratingCounts: JSON.stringify(ratingCounts),
-    verdictCounts: JSON.stringify(verditCounts),
-  });
+  // console.log(verditCounts);
+
+  const result = await User.findOneAndUpdate(
+    { handle: handle }, // Find the user by their unique ID
+    { verdictHistory: verditCounts }, // Update the verdictHistory field
+    { new: true } // Return the updated document
+  );
+  if(result){
+    console.log("Updated verdict history for user: ", result);
+  }
 
   // 4. Return success response with inserted problems
   return res.status(200).json(
@@ -138,57 +131,20 @@ const deleteProblems = asyncHandler(async (req, res) => {
 ///// get the count of verdicts
 const fetchSubmissionStats = asyncHandler(async (req, res) => {
   const { handle } = req.query;
-  const redisKey = `user:${handle}`;
-
-  if (!client.isOpen) {
-    await client.connect();
-  }
-
-  const data = await client.hGetAll(redisKey);
-
-  const jsonverdictCounts = data.verdictCounts
-    ? JSON.parse(data.verdictCounts)
-    : {};
-
-  const verdictCounts = Object.entries(jsonverdictCounts).map(
-    ([key, value]) => ({
-      name: key,
-      value: parseInt(value, 10), // Ensure the value is a number
-    })
-  );
-
-  // console.log("Verdict Countsasfadf:", verdictCounts);
-
-  return res.status(200).json(verdictCounts);
+  const user = await User.findOne({ handle: handle });
+  
+  const data = Object.entries(user.verdictHistory).map(([key, value]) => ({
+    status: key,
+    count: value
+  }));
+  return res.status(200).json(data);
 });
 
 ///// get the number of ratings
 const fetchRatingCount = asyncHandler(async (req, res) => {
-  const { handle } = req.query;
-  const redisKey = `user:${handle}`;
-
-  if (!client.isOpen) {
-    await client.connect();
-  }
-
-  const data = await client.hGetAll(redisKey);
-
-  const jsonratingCounts = data.ratingCounts
-    ? JSON.parse(data.ratingCounts)
-    : {};
-
-  const ratingCounts = Object.entries(jsonratingCounts).map(([key, value]) => ({
-    rating: key,
-    count: parseInt(value, 10), // Ensure the value is a number
-  }));
-
-  // console.log("Verdict Count:", ratingCounts);
-
-  return res.status(200).json(ratingCounts);
 });
 
-///// get the rating history
-
+///// get the rating history for line chart
 const fetchRatingHistory = asyncHandler(async (req, res) => {
   // 1. Get the handle from the request body
   const { handle } = req.query;
@@ -201,10 +157,6 @@ const fetchRatingHistory = asyncHandler(async (req, res) => {
   );
   const responses = APIresponse.data.result;
 
-  // console.log(`Fetched ${responses.length} contest history from Codeforces`);
-
-  let insertedCount = 0;
-
   const formattedRatings = responses.map((response) => {
     const {
       contestId,
@@ -214,28 +166,16 @@ const fetchRatingHistory = asyncHandler(async (req, res) => {
       oldRating,
       newRating,
     } = response;
-    let index = 0;
 
-    const formattedRatings = responses.map((response) => {
-      const {
-        contestId,
-        contestName,
-        rank,
-        ratingUpdateTimeSeconds: date,
-        oldRating,
-        newRating,
-      } = response;
+    const formattedDate = new Date(date * 1000).toLocaleDateString("en-GB"); // "DD/MM/YYYY"
 
-      index++;
-
-      const formattedDate = new Date(date * 1000).toLocaleDateString("en-GB"); // "DD/MM/YYYY"
-
-      return { date: formattedDate, newRating };
-    });
-    // 4. Return success response with rating history
-    return res.status(200).json(formattedRatings);
+    return { date: formattedDate, newRating };
   });
+  // 4. Return success response with rating history
+  // console.log(formattedRatings);
+  return res.status(200).json(formattedRatings);
 });
+
 
 export {
   fetchProblems,

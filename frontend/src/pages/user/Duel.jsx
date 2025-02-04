@@ -95,16 +95,16 @@ function Duel() {
   useEffect(() => {
     const fetchProblems = async () => {
       const handle = "-is-this-dft_"; // Temporary setup
-      // try {
-      //     await axios.post("http://localhost:3000/api/v1/problems/fetchProblems", {
-      //       handle
-      //     }, {
-      //       headers: { "Content-Type": "application/json" }
-      //     });
-      //     console.log("fetching problem data script executed");
-      // } catch (error) {
-      //     console.error("Error running fetching problem data: ", error);
-      // }
+      try {
+          await axios.post("http://localhost:3000/api/v1/problems/fetchProblems", {
+            handle
+          }, {
+            headers: { "Content-Type": "application/json" }
+          });
+          console.log("fetching problem data script executed");
+      } catch (error) {
+          console.error("Error running fetching problem data: ", error);
+      }
     };
 
     fetchProblems();

@@ -47,7 +47,7 @@ function CFProfile() {
   useEffect(() => {
     const fetchSubmissionStats = asyncHandler(async () => {
 
-      // console.log( "fetchSubmissionStats executed " +handle);
+      console.log( "fetchSubmissionStats executed " +handle);
 
       const response = await axios.get(
         "http://localhost:3000/api/v1/problems/fetchSubmissionStats",
@@ -56,6 +56,7 @@ function CFProfile() {
           headers: { "Content-Type": "application/json" },
         }
       );
+      console.log(response.data)
       setsubmissionStats(response.data);
     });
 
@@ -155,10 +156,12 @@ function CFProfile() {
               innerRadius={60}
               outerRadius={100}
               paddingAngle={5}
-              dataKey="value"
+              dataKey="count"
+              nameKey="status"
             >
               {submissionStats.map((entry, index) => (
                  <Cell key={`cell-${index}`} fill={colors[index % colors.length]} /> // Assign color
+                 
               ))}
             </Pie>
             <Tooltip />

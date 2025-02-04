@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./login.css";
 import myImage from "../../assets/images/panda1.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import axios from "axios";
 
 const Login = () => {
   const [username, setUsername] = useState("");
+  const [handle, setHandle] = useState("");
   const [password, setPassword] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
@@ -21,13 +22,26 @@ const Login = () => {
     try {
       const response = await axios.post(
         "http://localhost:3000/api/v1/users/login",
-        { username, password },
+        { username, password, handle },
         { withCredentials: true }
       );
 
       if (response.status === 200) {
         setAlertMessage("Login successful");
         showAlert("Login successful");
+
+        console.log(handle);
+        // try {
+        //   await axios.post("http://localhost:3000/api/v1/problems/fetchProblems", {
+        //     handle
+        //   }, {
+        //     headers: { "Content-Type": "application/json" }
+        //   });
+        //   console.log("fetching problem data script executed");
+        // } catch (error) {
+        //   console.error("Error running fetching problem data: ", error);
+        // }
+
         navigate("/user/duel");
       } else {
         setAlertMessage("Login failed");
@@ -75,6 +89,18 @@ const Login = () => {
               required
             />
             <label>Username</label>
+          </div>
+          <div className="input-box">
+            <span className="icon">
+              <ion-icon name="mail"></ion-icon>
+            </span>
+            <input
+              type="text"
+              value={handle}
+              onChange={(e) => setHandle(e.target.value)}
+              required
+            />
+            <label>Handle</label>
           </div>
           <div className="input-box">
             <span className="icon2" id="LOCKHIDDEN">

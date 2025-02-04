@@ -90,11 +90,15 @@ const loginUser = asyncHandler(async (req, res) => {
     8. return success response
   */
   // 1st step :
-  const { username, password } = req.body;
+  const { username, password, handle} = req.body;
   // console.log(username, password);
   // 2nd step:
   if (!username) {
-    throw new ApiError(400, "Email or username is required");
+    throw new ApiError(400, "Username is required");
+  }
+
+  if (!handle) {
+    throw new ApiError(400, "Handle is required");
   }
 
   // 3rd step :
