@@ -80,8 +80,12 @@ export const createDuel = asyncHandler(async (req, res) => {
 export const dropDuel = asyncHandler(async (req, res) => {
   const { duelId } = req.params;
 
+  console.log(duelId);
+
   // Find and delete the duel
   const duel = await Duel.findByIdAndDelete(duelId);
+
+  console.log(duel);
   if (!duel) {
     throw new ApiError(404, "Duel not found");
   }

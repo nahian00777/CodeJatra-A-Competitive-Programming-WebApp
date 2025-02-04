@@ -18,7 +18,7 @@ const DuelRoom = ({ onClose }) => {
     ? `https://codeforces.com/problemset/problem/${duelData.problem.contestId}/${duelData.problem.index}`
     : "#";
   const opponent = duelData
-    ? duelData.user2[0]
+    ? {name : duelData.user2[0].handle, rating: "N/A"}
     : { name: "Unknown", rating: "N/A" };
 
   // Handle closing the duel room

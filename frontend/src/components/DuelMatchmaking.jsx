@@ -67,6 +67,7 @@ const DuelMatchmaking = ({ onClose }) => {
       if (response.data.success) {
         console.log("Duel request sent successfully");
         dispatch(setDuelData(response.data.data));
+        // console.log("Duel data:", response.data.data.user2[0].handle);
         navigate("/user/duel-room");
       } else {
         // Set the error message if the problem is due to no unsolved problems
