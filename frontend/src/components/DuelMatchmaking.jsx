@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setDuelData } from "../redux/userSlice.jsx";
 import { X, Search, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const DuelMatchmaking = ({ onClose }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRating, setSelectedRating] = useState("any");
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(""); // New state to hold error message
 
   useEffect(() => {
-    // Fetch users from the API
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
@@ -25,18 +28,15 @@ const DuelMatchmaking = ({ onClose }) => {
       }
     };
 
-    // Fetch current user
     const fetchCurrentUser = async () => {
       try {
         const response = await axios.get(
           "http://localhost:3000/api/v1/users/getCurrentUser",
-          { withCredentials: true } // Ensure cookies are sent
+          { withCredentials: true }
         );
 
-        console.log(response);
-
         if (response.data.success) {
-          setCurrentUser(response.data.data); // Ensure this matches your response structure
+          setCurrentUser(response.data.data);
         }
       } catch (error) {
         console.error("Error fetching current user:", error);
@@ -57,24 +57,34 @@ const DuelMatchmaking = ({ onClose }) => {
       const response = await axios.post(
         "http://localhost:3000/api/v1/duel/createDuel",
         {
-          user1Id: currentUser.handle,
-          user2Id: opponentHandle,
+          user1Id: String(currentUser.handle),
+          user2Id: String(opponentHandle),
           rating: Number(rating),
-        }, // Ensure this matches your request structure
-        { withCredentials: true } // Ensure cookies are sent
+        },
+        { withCredentials: true }
       );
 
       if (response.data.success) {
         console.log("Duel request sent successfully");
-        navigate("/user/duel-room", {
-          state: {
-            opponentHandle,
-            problemUrl: "https://codeforces.com/problemset/problem/1/A",
-          },
-        });
+        dispatch(setDuelData(response.data.data));
+        // console.log("Duel data:", response.data.data.user2[0].handle);
+        navigate("/user/duel-room");
+      } else {
+        // Set the error message if the problem is due to no unsolved problems
+        if (response.data.message === "No unsolved problem found") {
+          setErrorMessage("No unsolved problems available for this rating.");
+          // Hide the toast after 3 seconds
+          setTimeout(() => {
+            setErrorMessage("");
+          }, 3000);
+        }
       }
     } catch (error) {
       console.error("Error sending duel request:", error);
+      setErrorMessage("No Common Unsolved Problem Found.");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
     }
   };
 
@@ -84,7 +94,7 @@ const DuelMatchmaking = ({ onClose }) => {
 
   const filteredUsers = users.filter(
     (user) =>
-      user._id !== currentUser?._id && // Exclude the current user
+      user._id !== currentUser?._id &&
       user.fullName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -101,6 +111,13 @@ const DuelMatchmaking = ({ onClose }) => {
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
           Find an Opponent
         </h2>
+
+        {/* Toast Message */}
+        {errorMessage && (
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white p-4 rounded-lg shadow-lg max-w-xs w-full z-50 opacity-100 transition-opacity duration-300 ease-in-out">
+            <p>{errorMessage}</p>
+          </div>
+        )}
 
         <div className="space-y-6">
           <div>

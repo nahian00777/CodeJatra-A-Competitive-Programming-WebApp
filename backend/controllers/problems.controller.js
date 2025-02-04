@@ -2,14 +2,30 @@ import { asyncHandler } from "../utils/AsyncHandler.js";
 import { Problems } from "../models/problem.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import axios from "axios";
+import redis from "redis";
+
+const client = redis.createClient({
+  host: "127.0.0.1", // Replace with your Redis host
+  port: 6379, // Replace with your Redis port
+});
+
+client.on("error", (err) => {
+  console.error("Redis error:", err);
+});
+
+const ratingCounts = {};
+const verditCounts = {};
+const visited = new Set();
 
 const fetchProblems = asyncHandler(async (req, res) => {
   // 1. Get the handle from the request body
   const { handle } = req.body;
 
+  const redisKey = `user:${handle}`;
+
   // 2. Fetch the user's solved problems from Codeforces API
   const APIresponse = await axios.get(
-    `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=100000`
+    `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=10000`
   );
   const responses = APIresponse.data.result;
 
@@ -22,6 +38,34 @@ const fetchProblems = asyncHandler(async (req, res) => {
     const { contestId, index, name, rating } = response.problem;
     const solver = handle;
     const solved = response.verdict === "OK";
+
+    // Check if contestId length > 4 and rating is not defined
+    if (String(contestId).length > 4) {
+      console.log(
+        `Skipping problem from contestId: ${contestId} due to invalid data.`
+      );
+      continue; // Skip this iteration if the conditions are met
+    }
+
+    // create map for verdicts
+    if (response.verdict === "OK") {
+      verditCounts["Accepted"] = (verditCounts["Accepted"] || 0) + 1;
+    } else if (
+      response.verdict === "WRONG_ANSWER" ||
+      response.verdict === "TIME_LIMIT_EXCEEDED" ||
+      response.verdict === "MEMORY_LIMIT_EXCEEDED"
+    ) {
+      verditCounts[response.verdict] =
+        (verditCounts[response.verdict] || 0) + 1;
+    } else {
+      verditCounts["Others"] = (verditCounts["Others"] || 0) + 1;
+    }
+
+    // creating the map for barchart of solved rating!
+    if (solved && rating != null && !visited.has(name)) {
+      visited.add(name);
+      ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
+    }
 
     // Check if the problem already exists
     const existingProblem = await Problems.findOne({
@@ -52,6 +96,12 @@ const fetchProblems = asyncHandler(async (req, res) => {
   }
 
   console.log(`Total inserted problems: ${insertedCount}`);
+  // Store ratingCounts and verdictCounts
+  await client.hSet(redisKey, {
+    ratingCounts: JSON.stringify(ratingCounts),
+    verdictCounts: JSON.stringify(verditCounts),
+  });
+
   // 4. Return success response with inserted problems
   return res.status(200).json(
     new ApiResponse(200, {
@@ -60,40 +110,137 @@ const fetchProblems = asyncHandler(async (req, res) => {
   );
 });
 
+const deleteProblems = asyncHandler(async (req, res) => {
+  try {
+    // Deleting problems where contestId length > 4 or rating is not defined
+    const result = await Problems.deleteMany({
+      $or: [
+        { $expr: { $gt: [{ $strLenCP: "$contestId" }, 4] } }, // contestId length > 4
+        { rating: { $exists: false } }, // rating not defined
+      ],
+    });
+
+    console.log(`Deleted ${result.deletedCount} problems.`);
+
+    // Return a success response with the number of deleted problems
+    return res.status(200).json({
+      message: `${result.deletedCount} problems deleted successfully`,
+    });
+  } catch (error) {
+    console.error("Error deleting problems:", error);
+    return res.status(500).json({
+      message: "Error deleting problems",
+      error: error.message,
+    });
+  }
+});
 
 ///// get the count of verdicts
+const fetchSubmissionStats = asyncHandler(async (req, res) => {
+  const { handle } = req.query;
+  const redisKey = `user:${handle}`;
 
+  if (!client.isOpen) {
+    await client.connect();
+  }
 
+  const data = await client.hGetAll(redisKey);
+
+  const jsonverdictCounts = data.verdictCounts
+    ? JSON.parse(data.verdictCounts)
+    : {};
+
+  const verdictCounts = Object.entries(jsonverdictCounts).map(
+    ([key, value]) => ({
+      name: key,
+      value: parseInt(value, 10), // Ensure the value is a number
+    })
+  );
+
+  console.log("Verdict Countsasfadf:", verdictCounts);
+
+  return res.status(200).json(verdictCounts);
+});
 
 ///// get the number of ratings
+const fetchRatingCount = asyncHandler(async (req, res) => {
+  const { handle } = req.query;
+  const redisKey = `user:${handle}`;
 
+  if (!client.isOpen) {
+    await client.connect();
+  }
 
+  const data = await client.hGetAll(redisKey);
+
+  const jsonratingCounts = data.ratingCounts
+    ? JSON.parse(data.ratingCounts)
+    : {};
+
+  const ratingCounts = Object.entries(jsonratingCounts).map(([key, value]) => ({
+    rating: key,
+    count: parseInt(value, 10), // Ensure the value is a number
+  }));
+
+  console.log("Verdict Count:", ratingCounts);
+
+  return res.status(200).json(ratingCounts);
+});
 
 ///// get the rating history
 
 const fetchRatingHistory = asyncHandler(async (req, res) => {
-    // 1. Get the handle from the request body
-    const { handle } = req.query;
+  // 1. Get the handle from the request body
+  const { handle } = req.query;
 
-    console.log("fetching rating history of " + handle);
+  console.log("fetching rating history of " + handle);
 
-    // 2. Fetch the user's rating history from Codeforces API
-    const APIresponse = await axios.get(`https://codeforces.com/api/user.rating?handle=${handle}`);
-    const responses = APIresponse.data.result;
+  // 2. Fetch the user's rating history from Codeforces API
+  const APIresponse = await axios.get(
+    `https://codeforces.com/api/user.rating?handle=${handle}`
+  );
+  const responses = APIresponse.data.result;
 
-    console.log(`Fetched ${responses.length} contest history from Codeforces`);
+  console.log(`Fetched ${responses.length} contest history from Codeforces`);
 
-    let insertedCount = 0;
+  let insertedCount = 0;
 
-    const formattedRatings = responses.map(response =>  {
-        const { contestId, contestName, rank, ratingUpdateTimeSeconds: date, oldRating, newRating } = response;
+  const formattedRatings = responses.map((response) => {
+    const {
+      contestId,
+      contestName,
+      rank,
+      ratingUpdateTimeSeconds: date,
+      oldRating,
+      newRating,
+    } = response;
+    let index = 0;
 
-        const formattedDate = new Date(date * 1000).toLocaleDateString("en-GB"); // "DD/MM/YYYY"
+    const formattedRatings = responses.map((response) => {
+      const {
+        contestId,
+        contestName,
+        rank,
+        ratingUpdateTimeSeconds: date,
+        oldRating,
+        newRating,
+      } = response;
 
-        return { date: formattedDate, newRating };
+      index++;
+
+      const formattedDate = new Date(date * 1000).toLocaleDateString("en-GB"); // "DD/MM/YYYY"
+
+      return { date: formattedDate, newRating };
     });
     // 4. Return success response with rating history
     return res.status(200).json(formattedRatings);
+  });
 });
 
-export { fetchProblems, fetchRatingHistory };
+export {
+  fetchProblems,
+  fetchRatingHistory,
+  fetchSubmissionStats,
+  fetchRatingCount,
+  deleteProblems,
+};
