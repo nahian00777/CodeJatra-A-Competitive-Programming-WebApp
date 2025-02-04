@@ -94,7 +94,6 @@ const fetchProblems = asyncHandler(async (req, res) => {
     ratingCounts: JSON.stringify(ratingCounts),
     verdictCounts: JSON.stringify(verditCounts),
   });
-  console.log(verditCounts)
   
   // 4. Return success response with inserted problems
   return res.status(200).json(
@@ -132,19 +131,25 @@ const fetchSubmissionStats = asyncHandler(async (req, res) => {
 
 ///// get the number of ratings
 const fetchRatingCount = asyncHandler(async (req, res) => {
+  const { handle } = req.query;
+  const redisKey = `user:${handle}`;
+  
+  if (!client.isOpen) {
+    await client.connect();
+  }
+  
   const data = await client.hGetAll(redisKey);
+  
+  const jsonratingCounts = data.ratingCounts ? JSON.parse(data.ratingCounts) : {};
 
-  // Ensure verdictCounts exists before parsing
-  const jsonverdictCounts = data.verdictCounts ? JSON.parse(data.verdictCounts) : {};
-
-  const verdictCounts = Object.entries(jsonverdictCounts).map(([key, value]) => ({
-    name: key,
-    value: parseInt(value, 10), // Ensure the value is a number
+  const ratingCounts = Object.entries(jsonratingCounts).map(([key, value]) => ({
+    rating: key,
+    count: parseInt(value, 10), // Ensure the value is a number
   }));
 
-  console.log("Verdict Countsasfadf:", verdictCounts);
+  console.log("Verdict Count:", ratingCounts);
 
-  return res.status(200).json(verdictCounts);
+  return res.status(200).json(ratingCounts);
 });
 
 

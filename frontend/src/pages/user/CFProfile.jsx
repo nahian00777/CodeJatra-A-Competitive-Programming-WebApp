@@ -15,13 +15,6 @@ const duelRatingHistory = [
   { date: '2023-05', rating: 1350 },
 ];
 
-const solvedRatings = [
-  { rating: '800-1000', count: 25 },
-  { rating: '1000-1200', count: 35 },
-  { rating: '1200-1400', count: 20 },
-  { rating: '1400-1600', count: 15 },
-  { rating: '1600-1800', count: 10 },
-];
 const colors = ["#4CAF50", "#2196F3", "#00BCD4", "#9C27B0", "#E91E63"];
 
 function CFProfile() {
@@ -29,6 +22,9 @@ function CFProfile() {
   const handle = useSelector((state) => state.user.handle);
   const [codeforcesRatingHistory, setCodeforcesRatingHistory] = useState([]);
   const [submissionStats, setsubmissionStats] = useState([]);
+  const [solvedRatings, setsolvedRatings] = useState([]);
+
+
   useEffect(() => {
     const fetchRatingHistory = asyncHandler(async () => {
 
@@ -61,10 +57,27 @@ function CFProfile() {
         }
       );
       setsubmissionStats(response.data);
-      console.log("Submission Stats:", response.data);
     });
 
     fetchSubmissionStats();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchRatingCount = asyncHandler(async () => {
+
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/problems/fetchRatingCount",
+        {
+          params: { handle }, // Pass the handle as a query parameter
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      setsolvedRatings(response.data);
+      console.log("Solved Ratings:", response.data);
+    });
+
+    fetchRatingCount();
   }, []);
 
   
