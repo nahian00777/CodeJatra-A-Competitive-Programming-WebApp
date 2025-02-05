@@ -74,6 +74,7 @@ function AppContent() {
   const handleReject = async (id) => {
     try {
       // console.log(`Rejected duel request with id: ${id}`);
+      setNotifications(notifications.filter((x) => x.id !== id));
       await axios.delete(
         `http://localhost:3000/api/v1/duel/cancelDuel/${id}`,
         {},
@@ -81,7 +82,6 @@ function AppContent() {
           withCredentials: true,
         }
       );
-      setNotifications(notifications.filter((x) => x.id !== id));
     } catch (error) {
       console.error("Failed to reject duel request:", error);
     }
