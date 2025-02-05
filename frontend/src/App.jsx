@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
-import store from "./redux/store"; // Import the Redux store
+import store from "./redux/store";
 import LandingPage from "./pages/general/LandingPage";
-
 import DashBoard from "./pages/user/DashBoard";
 import IUPCDetails from "./pages/user/IUPCDetails";
 import Duel from "./pages/user/Duel";
@@ -19,45 +18,120 @@ import Chat from "./components/chat";
 import LoginPage from "./pages/general/Login";
 import RegisterPage from "./pages/general/register";
 import { ToastContainer } from "react-toastify";
+import NotificationContainer from "./components/notificationContainer"; // Import the NotificationContainer
+import axios from "axios";
 
 function AppContent() {
-  return (
-    <Routes>
-      {/* Landing page route */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      {/* Group routes for user-related pages */}
-      <Route
-        path="/user/*"
-        element={
-          <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-            <Sidebar /> {/* Sidebar remains persistent */}
-            <div className="flex-1 flex flex-col">
-              <Topbar /> {/* Topbar remains persistent */}
-              <main className="flex-1 overflow-y-auto">
-                <Routes>
-                  <Route path="dashboard" element={<DashBoard />} />
-                  <Route path="iupc-details" element={<IUPCDetails />} />
-                  <Route path="duel" element={<Duel />} />
-                  <Route path="duel-room" element={<DuelRoom />} />
-                  <Route path="duel-history" element={<DuelHistory />} />
-                  <Route path="leaderboard" element={<LeaderBoard />} />
-                  <Route path="cf-profile" element={<CFProfile />} />
-                  <Route path="contest-details" element={<ContestDetails />} />
-                  <Route
-                    path="ongoing-challenge"
-                    element={<OngoingChallenge />}
-                  />
-                  <Route path="chat" element={<Chat />} />
-                  <Route path="login" element={<LoginPage />} />
-                </Routes>
-              </main>
-            </div>
-          </div>
+  const [notifications, setNotifications] = useState([]);
+
+  const fetchDuelRequests = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/duel/checkNew",
+        {
+          withCredentials: true,
         }
+      );
+
+      if (response.data.success) {
+        const newRequests = response.data.data;
+        setNotifications(
+          newRequests.map((request) => ({
+            id: request._id,
+            message: `Duel request from ${request.user1[0].username}`,
+            sender: request.user1[0].username,
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching duel requests:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDuelRequests(); // Initial fetch
+    const intervalId = setInterval(fetchDuelRequests, 10000); // Fetch every 60 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, []);
+
+  const handleAccept = async (id) => {
+    try {
+      // console.log(`Accepted duel request with id: ${id}`);
+      await axios.patch(
+        `http://localhost:3000/api/v1/duel/acceptDuel/${id}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      setNotifications(notifications.filter((x) => x.id !== id));
+    } catch (error) {
+      console.error("Failed to accept duel request:", error);
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      // console.log(`Rejected duel request with id: ${id}`);
+      await axios.delete(
+        `http://localhost:3000/api/v1/duel/cancelDuel/${id}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      setNotifications(notifications.filter((x) => x.id !== id));
+    } catch (error) {
+      console.error("Failed to reject duel request:", error);
+    }
+  };
+
+  return (
+    <div>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/user/*"
+          element={
+            <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+              <Sidebar />
+              <div className="flex-1 flex flex-col">
+                <Topbar />
+                <main className="flex-1 overflow-y-auto">
+                  <Routes>
+                    <Route path="dashboard" element={<DashBoard />} />
+                    <Route path="iupc-details" element={<IUPCDetails />} />
+                    <Route path="duel" element={<Duel />} />
+                    <Route path="duel-room" element={<DuelRoom />} />
+                    <Route path="duel-history" element={<DuelHistory />} />
+                    <Route path="leaderboard" element={<LeaderBoard />} />
+                    <Route path="cf-profile" element={<CFProfile />} />
+                    <Route
+                      path="contest-details"
+                      element={<ContestDetails />}
+                    />
+                    <Route
+                      path="ongoing-challenge"
+                      element={<OngoingChallenge />}
+                    />
+                    <Route path="chat" element={<Chat />} />
+                    <Route path="login" element={<LoginPage />} />
+                  </Routes>
+                </main>
+              </div>
+            </div>
+          }
+        />
+      </Routes>
+      <NotificationContainer
+        onAccept={handleAccept}
+        onReject={handleReject}
+        notifications={notifications}
       />
-    </Routes>
+    </div>
   );
 }
 

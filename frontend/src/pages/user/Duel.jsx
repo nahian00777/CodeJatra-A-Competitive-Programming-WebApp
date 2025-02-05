@@ -51,29 +51,29 @@ function Duel() {
   const handle = useSelector((state) => state.user.handle);
 
   useEffect(() => {
-    const fetchDuelRequests = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/api/v1/duel/checkNew",
-          {
-            withCredentials: true,
-          }
-        );
+    // const fetchDuelRequests = async () => {
+    //   try {
+    //     const response = await axios.get(
+    //       "http://localhost:3000/api/v1/duel/checkNew",
+    //       {
+    //         withCredentials: true,
+    //       }
+    //     );
 
-        if (response.data.success) {
-          const newRequests = response.data.data;
-          setDuelRequests(newRequests);
-          // console.log(newRequests.length);
-          newRequests.forEach((request) => {
-            toast.info(`New duel request from ${request.user1.username}`);
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching duel requests:", error);
-      }
-    };
+    //     if (response.data.success) {
+    //       const newRequests = response.data.data;
+    //       setDuelRequests(newRequests);
+    //       // console.log(newRequests.length);
+    //       // newRequests.forEach((request) => {
+    //       //   toast.info(`New duel request from ${request.user1.username}`);
+    //       // });
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching duel requests:", error);
+    //   }
+    // };
 
-    const intervalDuel = setInterval(fetchDuelRequests, 10000); // Fetch every 10 seconds
+    // const intervalDuel = setInterval(fetchDuelRequests, 10000); // Fetch every 10 seconds
 
     const updateActivity = async () => {
       try {
@@ -91,7 +91,7 @@ function Duel() {
     };
 
     const interval = setInterval(updateActivity, 10000); // Update every 2 minutes
-    return () => clearInterval({ interval, intervalDuel }); // Cleanup on unmount
+    return () => clearInterval({ interval }); // Cleanup on unmount
   }, []);
 
   useEffect(() => {
