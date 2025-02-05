@@ -7,7 +7,7 @@ function NotificationContainer({ onAccept, onReject, notifications }) {
   if (notifications.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 w-80 z-50 space-y-2">
+    <div className="fixed bottom-1 left-2 w-90">
       {notifications.map((notification) => (
         <Notification
           key={notification.id}
