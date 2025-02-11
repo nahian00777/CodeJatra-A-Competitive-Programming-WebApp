@@ -105,7 +105,6 @@ const Leaderboard = () => {
                   onClick={() => console.log(`View profile for ${player.name}`)}
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                 >
-                  <ArrowRight className="w-5 h-5" />
                 </button>
               </div>
             </div>

@@ -24,6 +24,7 @@ function CFProfile() {
 
   
   const [codeforcesRatingHistory, setCodeforcesRatingHistory] = useState([]);
+  const [duelRatingHistory, setduelRatingHistory] = useState([]);
   const [submissionStats, setsubmissionStats] = useState([]);
   const [solvedRatings, setsolvedRatings] = useState([]);
   const [ProfilePicture, setProfilePicture] = useState("");
@@ -46,6 +47,7 @@ function CFProfile() {
         setRating(response.data.currentDuelRating);
         setduelWon(response.data.duelWon);
         setProfilePicture(response.data.avatar);
+        setduelRatingHistory(response.data.duelRatingHistory);
       } catch (error) {
         console.error("Error fetching duel stats: ", error);
       }
@@ -147,14 +149,14 @@ function CFProfile() {
       {/* Dual Rating Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <div className="lg:col-span-2 bg-gray-300 p-6 rounded-lg shadow-md flex flex-col items-center">
-          <h2 className="text-xl font-bold mb-4">Dual Rating History</h2>
+          <h2 className="text-xl font-bold mb-4">Duel Rating History</h2>
           <LineChart width={700} height={300} data={duelRatingHistory}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="rating" stroke="#8884d8" />
+            <Line type="monotone" dataKey="newRating" stroke="#8884d8" />
           </LineChart>
         </div>
         <div className="space-y-4 flex flex-col justify-center">
