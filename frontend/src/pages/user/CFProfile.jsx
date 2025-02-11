@@ -26,6 +26,7 @@ function CFProfile() {
   const [codeforcesRatingHistory, setCodeforcesRatingHistory] = useState([]);
   const [submissionStats, setsubmissionStats] = useState([]);
   const [solvedRatings, setsolvedRatings] = useState([]);
+  const [ProfilePicture, setProfilePicture] = useState("");
   const [Rating, setRating] = useState(0);
   const [duelWon, setduelWon] = useState(0);
 
@@ -40,11 +41,10 @@ function CFProfile() {
           }
         );
 
-        console.log("Duel stats:", response.data);
         // Handle the response data as needed
-        // setduelStat(response.data);
         setRating(response.data.currentDuelRating);
         setduelWon(response.data.duelWon);
+        setProfilePicture(response.data.avatar);
       } catch (error) {
         console.error("Error fetching duel stats: ", error);
       }
@@ -76,7 +76,6 @@ function CFProfile() {
   useEffect(() => {
     const fetchSubmissionStats = asyncHandler(async () => {
 
-      console.log( "fetchSubmissionStats executed " +handle);
 
       const response = await axios.get(
         "http://localhost:3000/api/v1/problems/fetchSubmissionStats",
@@ -117,7 +116,7 @@ function CFProfile() {
       <div className="text-center mb-12">
         <div className="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden">
           <img
-            src={profilePic}
+            src={ProfilePicture}
             alt="Profile"
             className="w-full h-full object-cover"
           />

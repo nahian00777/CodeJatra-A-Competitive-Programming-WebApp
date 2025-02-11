@@ -414,7 +414,8 @@ export const fetchDuelStats = asyncHandler(async (req, res) => {
     streak: user.currentStreak,
     duelWon: user.duelWon,
     currentDuelRating: user.currentDuelRating,
-    totalDuels: user.duelRatingHistory.length
+    totalDuels: user.duelRatingHistory.length,
+    avatar: user.avatar
   }
 
 

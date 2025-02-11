@@ -19,6 +19,7 @@ const Topbar = () => {
   const handle = useSelector((state) => state.user.handle); 
   const profilePic = useSelector((state) => state.user.profilePic);
 
+
   useEffect(() => {
     const fetchDuelStats = async () => {
       try {
@@ -99,7 +100,7 @@ const Topbar = () => {
             src={profilePic}
             alt="Profile"
             className="w-8 h-8 rounded-full border-2 border-white/30"
-          />
+            />
           <div className="flex flex-col items-start">
             <span className="text-sm font-medium text-white"> {userName}</span>
             <span className="text-xs text-blue-200 dark:text-gray-400">
