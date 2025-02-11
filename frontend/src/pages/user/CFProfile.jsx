@@ -26,6 +26,7 @@ function CFProfile() {
   const [submissionStats, setsubmissionStats] = useState([]);
   const [solvedRatings, setsolvedRatings] = useState([]);
   const [Rating, setRating] = useState(0);
+  const [duelWon, setduelWon] = useState(0);
 
   useEffect(() => {
     const fetchDuelStats = async () => {
@@ -42,7 +43,7 @@ function CFProfile() {
         // Handle the response data as needed
         // setduelStat(response.data);
         setRating(response.data.currentDuelRating);
-        console.log(response);
+        setduelWon(response.data.duelWon);
       } catch (error) {
         console.error("Error fetching duel stats: ", error);
       }
@@ -153,7 +154,7 @@ function CFProfile() {
               <Users className="w-12 h-12 text-green-500" />
               <div>
                 <h3 className="text-lg font-semibold">Duels Won</h3>
-                <p className="text-3xl font-bold text-green-600">127</p>
+                <p className="text-3xl font-bold text-green-600">{duelWon}</p>
               </div>
             </div>
           </div>

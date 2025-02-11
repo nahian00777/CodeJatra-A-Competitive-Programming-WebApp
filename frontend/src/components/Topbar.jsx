@@ -30,10 +30,7 @@ const Topbar = () => {
         );
 
         console.log("Duel stats:", response.data);
-        // Handle the response data as needed
-        // setduelStat(response.data);
         setRating(response.data.currentDuelRating);
-        console.log(response);
       } catch (error) {
         console.error("Error fetching duel stats: ", error);
       }

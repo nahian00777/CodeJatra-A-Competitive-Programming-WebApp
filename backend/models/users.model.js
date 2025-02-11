@@ -39,12 +39,13 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is required"],
     },
     duelRatingHistory: {
-      type: Map,
-      of: {
-        rating: { type: Number, default: 0 },
-        date: { type: Date, default: Date.now },
-      },
-      default: {}, // Default to an empty map
+      type: [
+        {
+          date: { type: String, required: true },
+          newRating: { type: Number, default: 1500 },
+        },
+      ],
+      default: [], // Default to an empty array
       required: true,
     },
     currentDuelRating: {
