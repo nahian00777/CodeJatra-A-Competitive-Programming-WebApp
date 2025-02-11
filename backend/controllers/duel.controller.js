@@ -95,6 +95,64 @@ export const dropDuel = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Duel dropped successfully"));
 });
 
+async function updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingChangeLoser) {
+  try {
+    // Retrieve both user documents
+    const [winner, loser] = await Promise.all([
+      User.findById(winnerId),
+      User.findById(loserId),
+    ]);
+
+    if (!winner || !loser) {
+      throw new Error('Winner or loser not found');
+    }
+
+    
+    // Current date for both entries
+    const duelKey = new Date().toISOString();
+    const currentDate = new Date();
+    
+    // Update winner's stats
+    winner.currentDuelRating += ratingChangeWinner;
+    winner.duelWon += 1;
+    winner.currentStreak += 1;
+
+    // Format the date to 'DD/MM/YYYY'
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`; // e.g., '05/11/2023'
+
+    // Add the new rating to the history
+    winner.duelRatingHistory.push({
+      date: formattedDate, 
+      newRating: winner.currentDuelRating,
+    });
+    
+    console.log("This is the Duel Rating History")
+    console.log(winner.duelRatingHistory)
+    
+    // Update loser's stats
+    loser.currentDuelRating += ratingChangeLoser; // ratingChangeLoser is typically negative
+    loser.currentStreak = 0; // Reset streak on loss
+
+    loser.duelRatingHistory.push({
+      date: formattedDate,
+      newRating: loser.currentDuelRating,
+    });
+    
+    // Save both users
+    // console.log(winner)
+    await Promise.all([winner.save(), loser.save()]);
+
+    console.log('Duel records updated successfully for both winner and loser!');
+  } catch (error) {
+    console.error('Error updating duel records:', error);
+    // Handle errors appropriately
+  }
+}
+
 // Complete a duel
 export const completeDuel = asyncHandler(async (req, res) => {
   const { duelId } = req.params;
@@ -163,6 +221,7 @@ export const completeDuel = asyncHandler(async (req, res) => {
 
   // Determine the winner
   let winnerId = null;
+  let loserId = null;
 
   // Ensure the duel start time is defined
   const duelStartTime = duel.startTime.getTime() / 1000; // Convert to seconds
@@ -173,15 +232,23 @@ export const completeDuel = asyncHandler(async (req, res) => {
         user1SolvedTime < user2SolvedTime
           ? duel.user1[0]._id
           : duel.user2[0]._id;
+      loserId =
+        user1SolvedTime > user2SolvedTime
+          ? duel.user1[0]._id
+          : duel.user2[0]._id;
     } else if (user1SolvedTime >= duelStartTime) {
       winnerId = duel.user1[0]._id;
+      loserId = duel.user2[0]._id;
     } else if (user2SolvedTime >= duelStartTime) {
       winnerId = duel.user2[0]._id;
+      loserId = duel.user1[0]._id;
     }
   } else if (user1SolvedTime && user1SolvedTime >= duelStartTime) {
     winnerId = duel.user1[0]._id;
+    loserId = duel.user2[0]._id;
   } else if (user2SolvedTime && user2SolvedTime >= duelStartTime) {
     winnerId = duel.user2[0]._id;
+    loserId = duel.user1[0]._id;
   }
 
   // If no winner is determined, handle the case appropriately
@@ -189,16 +256,29 @@ export const completeDuel = asyncHandler(async (req, res) => {
     console.log("No winner determined");
     // You might want to throw an error or return a specific response here
   } else {
+    console.log("User1: ", duel.user1[0]._id);
+    console.log("User2: ", duel.user2[0]._id);
     console.log("Winner ID:", winnerId);
+    console.log("Loser ID:", loserId);
   }
 
+  
+  const winner = await User.findById(winnerId);
+  
+  // Call the function with the winner's and loser's IDs and rating changes
+  const ratingChangeWinner = 25;     // Positive number for winner
+  const ratingChangeLoser = -25;     // Negative number for loser
+  
+  
+  updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingChangeLoser);
+  
+  // console.log(xyz)
+  
   // Update the duel status to finished and set the winner
   duel.status = "finished";
   duel.winner = winnerId;
   duel.endTime = new Date();
   await duel.save();
-
-  const winner = await User.findById(winnerId);
 
   return res
     .status(200)
@@ -318,17 +398,15 @@ export const checkNewDuels = asyncHandler(async (req, res) => {
 // get the duel statistics of a user
 export const fetchDuelStats = asyncHandler(async (req, res) => {
   const { handle } = req.query;
-  console.log("fetching duel stats for" + handle);
   const user = await User.findOne({ handle: handle });
-  console.log(user.verdictHistory);
 
   const data = {
     streak: user.currentStreak,
     duelWon: user.duelWon,
     currentDuelRating: user.currentDuelRating,
+    totalDuels: user.duelRatingHistory.length
   }
 
-  console.log(data);
 
   return res.status(200).json(data);
 });

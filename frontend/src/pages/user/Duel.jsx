@@ -234,13 +234,13 @@ function Duel() {
             <StatItem
               icon={Swords}
               label="Total Duels"
-              value={stats.totalDuels}
+              value={duelStat.totalDuels}
             />
             <StatItem icon={Trophy} label="Wins" value={duelStat.duelWon} />
             <StatItem
               icon={Target}
               label="Win Rate"
-              value={`${stats.winRate}%`}
+              value={`${duelStat.duelWon/duelStat.totalDuels*100}%`}
             />
             <StatItem
               icon={Timer}

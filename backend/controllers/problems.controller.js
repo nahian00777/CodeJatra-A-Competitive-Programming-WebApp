@@ -12,7 +12,7 @@ const visited = new Set();
 const fetchProblems = asyncHandler(async (req, res) => {
   // 1. Get the handle from the request body
   const { handle } = req.body;
-  console.log("fetching problems of " + handle);
+  // console.log("fetching problems of " + handle);
 
   // 2. Fetch the user's solved problems from Codeforces API
   const APIresponse = await axios.get(
@@ -83,8 +83,8 @@ const fetchProblems = asyncHandler(async (req, res) => {
     }
   }
 
-  console.log(`Total inserted problems: ${insertedCount}`);
-  console.log(ratingCounts);
+  // console.log(`Total inserted problems: ${insertedCount}`);
+  // console.log(ratingCounts);
 
   const result = await User.findOneAndUpdate(
     { handle: handle }, // Find the user by their unique ID
@@ -116,7 +116,7 @@ const deleteProblems = asyncHandler(async (req, res) => {
       ],
     });
 
-    console.log(`Deleted ${result.deletedCount} problems.`);
+    // console.log(`Deleted ${result.deletedCount} problems.`);
 
     // Return a success response with the number of deleted problems
     return res.status(200).json({
