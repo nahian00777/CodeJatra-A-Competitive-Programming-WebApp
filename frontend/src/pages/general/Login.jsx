@@ -4,8 +4,7 @@ import myImage from "../../assets/images/panda1.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setHandle1, setUsername1 } from '../../redux/userSlice.jsx'; // Adjust the import path
-
+import { setHandle1, setUsername1, setProfilePic } from "../../redux/userSlice.jsx"; // Adjust the import path
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -31,13 +30,13 @@ const Login = () => {
       );
 
       if (response.status === 200) {
-        
         setAlertMessage("Login successful");
         showAlert("Login successful");
-        console.log(handle);
-        dispatch(setUsername1(username)); // Set the username in Redux store
-        dispatch(setHandle1(handle)); // Set the handle in Redux store
-
+        // console.log(handle);
+        dispatch(setUsername1(username));
+        dispatch(setHandle1(handle));
+        // console.log(response.data.data.user.avatar);
+        dispatch(setProfilePic(response.data.data.user.avatar));
         navigate("/user/duel");
       } else {
         setAlertMessage("Login failed");

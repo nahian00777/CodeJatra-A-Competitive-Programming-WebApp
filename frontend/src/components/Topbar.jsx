@@ -15,8 +15,9 @@ const Topbar = () => {
     { id: 3, message: "New contest starting soon", time: "3h ago" },
   ];
 
-  const userName = useSelector((state) => state.user.username); // Get the username from Redux store
-  const handle = useSelector((state) => state.user.handle); // Get the handle from Redux store
+  const userName = useSelector((state) => state.user.username); 
+  const handle = useSelector((state) => state.user.handle); 
+  const profilePic = useSelector((state) => state.user.profilePic);
 
   useEffect(() => {
     const fetchDuelStats = async () => {
@@ -95,7 +96,7 @@ const Topbar = () => {
           className="flex items-center gap-3 p-1.5 rounded-full hover:bg-white/10"
         >
           <img
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            src={profilePic}
             alt="Profile"
             className="w-8 h-8 rounded-full border-2 border-white/30"
           />

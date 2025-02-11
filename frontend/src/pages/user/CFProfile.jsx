@@ -20,6 +20,7 @@ const colors = ["#4CAF50", "#2196F3", "#00BCD4", "#9C27B0", "#E91E63"];
 function CFProfile() {
   const username = useSelector((state) => state.user.username);
   const handle = useSelector((state) => state.user.handle);
+  const profilePic = useSelector((state) => state.user.profilePic);
 
   
   const [codeforcesRatingHistory, setCodeforcesRatingHistory] = useState([]);
@@ -116,7 +117,7 @@ function CFProfile() {
       <div className="text-center mb-12">
         <div className="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?w=400&h=400&fit=crop"
+            src={profilePic}
             alt="Profile"
             className="w-full h-full object-cover"
           />
