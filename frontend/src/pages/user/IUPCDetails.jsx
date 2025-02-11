@@ -64,7 +64,7 @@ const IUPCDetails = () => {
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {contests.map((contest) => (
               <tr
-                key={contest.id}
+                key={contest.id} // Ensure each contest has a unique id
                 className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
@@ -84,7 +84,7 @@ const IUPCDetails = () => {
                 </td>
                 <td className="px-4 py-3 text-blue-600 dark:text-blue-400">
                   <a
-                    href= {contest.platform.url}
+                    href={contest.platform.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:underline"
