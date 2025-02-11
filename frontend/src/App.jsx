@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import LandingPage from "./pages/general/LandingPage";
@@ -23,6 +23,7 @@ import axios from "axios";
 
 function AppContent() {
   const [notifications, setNotifications] = useState([]);
+  const navigate = useNavigate();
 
   const fetchDuelRequests = async () => {
     try {
@@ -57,15 +58,20 @@ function AppContent() {
 
   const handleAccept = async (id) => {
     try {
-      // console.log(`Accepted duel request with id: ${id}`);
-      await axios.patch(
+      const response = await axios.patch(
         `http://localhost:3000/api/v1/duel/acceptDuel/${id}`,
         {},
         {
           withCredentials: true,
         }
       );
+      const duelDataFromOp = response.data.data;
+      // console.log("Duel full data:", duelData);
       setNotifications(notifications.filter((x) => x.id !== id));
+
+      // Pass the duelId to the ongoing-challenge page
+      // console.log("Duel data:", duelDataFromOp);
+      navigate("/user/ongoing-challenge", { state: { duelDataFromOp, accepted: true } });
     } catch (error) {
       console.error("Failed to accept duel request:", error);
     }

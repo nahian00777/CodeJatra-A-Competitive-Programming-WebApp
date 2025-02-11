@@ -1,17 +1,28 @@
 import React, { useState } from "react";
 import { X, Swords, User } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const OngoingChallenge = ({ onClose, challengeDetails }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Extract duelDataFromOp from navigation state
+  const { duelDataFromOp, accepted } = location.state || {};
+
+  // Get duelData from Redux store
+  const storedDuelData = useSelector((state) => state.user.duelData);
+
+  // Determine which duel data to use
+  const duelData = accepted ? duelDataFromOp : storedDuelData;
+  // const duelData = location.state?.duelData;
+  // const duelDataFromOp = location.state?.duelDataFromOp;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [isWinner, setIsWinner] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [duelOngoing, setDuelOngoing] = useState(true);
 
-  const duelData = useSelector((state) => state.user.duelData);
+  // const duelData = useSelector((state) => state.user.duelData);
 
   const problemUrl = duelData
     ? `https://codeforces.com/problemset/problem/${duelData.problem.contestId}/${duelData.problem.index}`
@@ -37,7 +48,7 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
     setShowToast(false);
 
     try {
-      console.log(duelData._id);
+      // console.log(duelData._id);
       const response = await fetch(
         `http://localhost:3000/api/v1/duel/completeDuel/${duelData._id}`,
         {
@@ -78,6 +89,7 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
   };
 
   const handleDropDuel = async () => {
+    // console.log(duelDataFromOp);
     if (!duelOngoing) return;
 
     try {
@@ -159,7 +171,9 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
                 Drop Duel
               </button>
 
-              {message && <p className="mt-4 text-sm text-gray-200">{message}</p>}
+              {message && (
+                <p className="mt-4 text-sm text-gray-200">{message}</p>
+              )}
 
               {isWinner && (
                 <div className="mt-6 text-center">

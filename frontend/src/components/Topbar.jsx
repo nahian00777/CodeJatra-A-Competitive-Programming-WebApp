@@ -60,13 +60,13 @@ const Topbar = () => {
       <div className="flex items-center gap-6">
         {/* Notifications */}
         <div className="relative">
-          <button
+          {/* <button
             onClick={() => setShowNotifications(!showNotifications)}
             className="p-2 rounded-full hover:bg-white/10 relative"
-          >
-            <Bell className="w-5 h-5 text-white" />
+          > */}
+            {/* <Bell className="w-5 h-5 text-white" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
+          </button> */}
 
           {showNotifications && (
             <div className="absolute right-0 mt-2 w-80 dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">

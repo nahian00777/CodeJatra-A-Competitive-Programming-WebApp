@@ -242,7 +242,7 @@ export const acceptDuel = asyncHandler(async (req, res) => {
   const { duelId } = req.params;
 
   // Fetch the duel
-  const duel = await Duel.findById(duelId);
+  const duel = await Duel.findById(duelId).populate("user1 user2");
   if (!duel) {
     throw new ApiError(404, "Duel not found");
   }
