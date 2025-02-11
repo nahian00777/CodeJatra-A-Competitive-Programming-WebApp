@@ -252,8 +252,9 @@ export const acceptDuel = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Duel is not in a state to be accepted");
   }
 
-  // Update the duel status to ongoing
+  // Update the duel status to ongoing and set invitationAccepted to true
   duel.status = "ongoing";
+  duel.invitationAccepted = true;
   duel.startTime = new Date();
   await duel.save();
 
@@ -275,27 +276,30 @@ export const listUserDuels = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, duels, "User duels retrieved successfully"));
 });
 
-export const cancelDuel = asyncHandler(async (req, res) => {
-  const { duelId } = req.params;
+// export const cancelDuel = asyncHandler(async (req, res) => {
+//   const { duelId } = req.params;
 
-  // Fetch the duel
-  const duel = await Duel.findById(duelId);
-  if (!duel) {
-    throw new ApiError(404, "Duel not found");
-  }
+//   // Fetch the duel
+//   const duel = await Duel.findById(duelId);
+//   if (!duel) {
+//     throw new ApiError(404, "Duel not found");
+//   }
 
-  // Check if the duel is in the waiting state
-  if (duel.status !== "waiting") {
-    throw new ApiError(400, "Duel cannot be canceled");
-  }
+//   // Check if the duel is in the ongoing state
+//   if (duel.status !== "ongoing") {
+//     throw new ApiError(400, "Duel cannot be canceled");
+//   }
 
-  // Delete the duel
-  await duel.remove();
+//   // Update the duel status to dropped
+//   duel.status = "dropped";
+//   await duel.save();
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Duel canceled successfully"));
-});
+//   return res
+//     .status(200)
+//     .json(
+//       new ApiResponse(200, {}, "Duel status updated to dropped successfully")
+//     );
+// });
 
 // Check for new duel requests
 export const checkNewDuels = asyncHandler(async (req, res) => {
@@ -305,15 +309,21 @@ export const checkNewDuels = asyncHandler(async (req, res) => {
   const newDuels = await Duel.find({
     user2: userId,
     status: "waiting",
+    invitationAccepted: false,
   }).populate("user1", "username");
 
   if (!newDuels.length) {
-    return res.status(200).json(new ApiResponse(200, [], "No new duel requests"));
+    return res
+      .status(200)
+      .json(new ApiResponse(200, [], "No new duel requests"));
   }
 
-  return res.status(200).json(new ApiResponse(200, newDuels, "New duel requests fetched successfully"));
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, newDuels, "New duel requests fetched successfully")
+    );
 });
-
 
 // get the duel statistics of a user
 export const fetchDuelStats = asyncHandler(async (req, res) => {
@@ -326,9 +336,25 @@ export const fetchDuelStats = asyncHandler(async (req, res) => {
     streak: user.currentStreak,
     duelWon: user.duelWon,
     currentDuelRating: user.currentDuelRating,
-  }
+  };
 
   console.log(data);
 
   return res.status(200).json(data);
+});
+
+export const checkInvitation = asyncHandler(async (req, res) => {
+  const { duelId } = req.params;
+
+  // Fetch the duel
+  const duel = await Duel.findById(duelId);
+  if (!duel) {
+    throw new ApiError(404, "Duel not found");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { invitationAccepted: duel.invitationAccepted })
+    );
 });
