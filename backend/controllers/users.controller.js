@@ -414,6 +414,19 @@ const getOnlineUsers = asyncHandler(async (req, res) => {
     );
 });
 
+const fetchLeaderboard = asyncHandler(async (req, res) => {
+  const users = await User.find({}, "username currentDuelRating handle");
+  const leaderboard = users
+    .map((user) => ({
+      name: user.username,
+      rating: user.currentDuelRating,
+      handle: user.handle,
+    }))
+    .sort((a, b) => b.rating - a.rating);
+  
+  return res.status(200).json(leaderboard);
+});
+
 export {
   registerUser,
   loginUser,
@@ -426,4 +439,5 @@ export {
   getAllUsers,
   updateUserActivity,
   getOnlineUsers,
+  fetchLeaderboard,
 };

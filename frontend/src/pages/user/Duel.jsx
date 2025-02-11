@@ -45,6 +45,8 @@ function Duel() {
   const [selectedDuel, setSelectedDuel] = useState(null);
   const [duelRequests, setDuelRequests] = useState([]);
   const [duelStat, setduelStat] = useState([]);
+  const [leaderboardData, setleaderboardData] = useState([]);
+  
 
 
   const userName = useSelector((state) => state.user.username);
@@ -74,6 +76,7 @@ function Duel() {
     // };
 
     // const intervalDuel = setInterval(fetchDuelRequests, 10000); // Fetch every 10 seconds
+    
 
     const updateActivity = async () => {
       try {
@@ -119,6 +122,21 @@ function Duel() {
     fetchProblems();
   }, []);
 
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/users/fetchLeaderboard`
+        );
+
+        setleaderboardData(response.data);
+      } catch (error) {
+        console.error("Error fetching leaderboard data: ", error);
+      }
+    };
+
+    fetchLeaderboard();
+  }, []);
 
   useEffect(() => {
     const fetchDuelStats = async () => {
@@ -251,11 +269,7 @@ function Duel() {
         </DuelCard>
         <DuelCard title="Current Rankings">
           <div className="space-y-4">
-            {[
-              { name: "Alex Chen", rating: 2150, change: "+15" },
-              { name: "Maria Garcia", rating: 2080, change: "+8" },
-              { name: "John Smith", rating: 2045, change: "-5" },
-            ].map((player, index) => (
+            {leaderboardData.slice(0,3).map((player, index) => (
               <div
                 key={index}
                 className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -271,15 +285,6 @@ function Duel() {
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-gray-900 dark:text-white">
                     {player.rating}
-                  </span>
-                  <span
-                    className={
-                      player.change.startsWith("+")
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }
-                  >
-                    {player.change}
                   </span>
                 </div>
               </div>

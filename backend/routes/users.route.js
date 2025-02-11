@@ -12,6 +12,7 @@ import {
   getAllUsers,
   updateUserActivity,
   getOnlineUsers,
+  fetchLeaderboard,
 } from "../controllers/users.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -37,6 +38,8 @@ userRouter.route("/login").post(loginUser);
 userRouter.route("/logout").post(verifyJWT, logoutUser);
 
 userRouter.route("/refreshAcessToken").post(refreshAccessToken);
+
+userRouter.route("/fetchLeaderboard").get(fetchLeaderboard);
 
 userRouter.route("/changePassword").patch(verifyJWT, changeCurrentPassword);
 

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowUp, ArrowDown, Users, ArrowRight, Search } from "lucide-react";
+import axios from "axios";
 
 const LeaderboardCard = ({ children }) => (
   <div className="dark:bg-gray-800 rounded-xl p-6 shadow-sm">
@@ -18,14 +19,31 @@ const LeaderboardCard = ({ children }) => (
 const Leaderboard = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [searchQuery, setSearchQuery] = useState("");
+  const [leaderboardData, setleaderboardData] = useState([]);
 
-  const leaderboardData = [
+  const leaderboard = [
     { name: "Alex Chen", rating: 2150 },
     { name: "Maria Garcia", rating: 2080 },
     { name: "John Smith", rating: 2045 },
     { name: "Sophia Johnson", rating: 2015 },
     { name: "Chris Evans", rating: 1990 },
   ];
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/users/fetchLeaderboard`
+        );
+
+        setleaderboardData(response.data);
+      } catch (error) {
+        console.error("Error fetching leaderboard data: ", error);
+      }
+    };
+
+    fetchLeaderboard();
+  }, []);
 
   const filteredData = leaderboardData.filter((player) =>
     player.name.toLowerCase().includes(searchQuery.toLowerCase())

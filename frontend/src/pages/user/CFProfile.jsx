@@ -27,6 +27,7 @@ function CFProfile() {
   const [submissionStats, setsubmissionStats] = useState([]);
   const [solvedRatings, setsolvedRatings] = useState([]);
   const [ProfilePicture, setProfilePicture] = useState("");
+  const [Position, setPosition] = useState(42);
   const [Rating, setRating] = useState(0);
   const [duelWon, setduelWon] = useState(0);
 
@@ -53,6 +54,23 @@ function CFProfile() {
     fetchDuelStats();
   }, []);
 
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/users/fetchLeaderboard`
+        );
+
+        const leaderboardData = response.data;
+        const userIndex = leaderboardData.findIndex(user => user.handle === handle) + 1;
+        setPosition(userIndex);
+      } catch (error) {
+        console.error("Error fetching leaderboard data: ", error);
+      }
+    };
+
+    fetchLeaderboard();
+  }, []);
 
   useEffect(() => {
     const fetchRatingHistory = asyncHandler(async () => {
@@ -145,7 +163,7 @@ function CFProfile() {
               <Trophy className="w-12 h-12 text-yellow-500" />
               <div>
                 <h3 className="text-lg font-semibold">Leaderboard Position</h3>
-                <p className="text-3xl font-bold text-blue-600">#42</p>
+                <p className="text-3xl font-bold text-blue-600">#{Position}</p>
               </div>
             </div>
           </div>
