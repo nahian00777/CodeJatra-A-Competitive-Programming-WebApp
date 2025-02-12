@@ -64,6 +64,7 @@ export const createDuel = asyncHandler(async (req, res) => {
     user1: [user1],
     user2: [user2],
     problem: {
+      name: selectedProblem.name,
       contestId: selectedProblem.contestId,
       index: selectedProblem.index,
     },

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import DuelDetails from "../../components/DuelDetails"; // Import the DuelDetails component
 
 const DuelHistory = () => {
   const [filter, setFilter] = useState("all");
+  const [selectedDuel, setSelectedDuel] = useState(null); // State for selected duel
 
   const navigate = useNavigate();
 
@@ -72,6 +74,7 @@ const DuelHistory = () => {
         {filteredDuels.map((duel) => (
           <div
             key={duel.id}
+            onClick={() => setSelectedDuel(duel)} // Set the selected duel on click
             className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
           >
             <div className="flex items-center gap-4">
@@ -119,6 +122,13 @@ const DuelHistory = () => {
           </span>
         </div>
       </div>
+
+      {selectedDuel && (
+        <DuelDetails
+          duel={selectedDuel}
+          onClose={() => setSelectedDuel(null)} // Close the details view
+        />
+      )}
     </div>
   );
 };
