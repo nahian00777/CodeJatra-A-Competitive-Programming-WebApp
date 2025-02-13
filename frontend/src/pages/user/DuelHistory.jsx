@@ -1,52 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import DuelDetails from "../../components/DuelDetails"; // Import the DuelDetails component
+import DuelDetails from "../../components/DuelDetails";
+import axios from "axios";
 
 const DuelHistory = () => {
   const [filter, setFilter] = useState("all");
-  const [selectedDuel, setSelectedDuel] = useState(null); // State for selected duel
+  const [selectedDuel, setSelectedDuel] = useState(null);
+  const [duels, setDuels] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   const navigate = useNavigate();
 
-  const allDuels = [
-    {
-      id: 1,
-      opponent: "Sarah Wilson",
-      problem: "Binary Tree Traversal",
-      result: "Won",
-      time: "2h ago",
-      timeSpent: "25:30",
-      rating: 1850,
-      ratingChange: "+15",
-    },
-    {
-      id: 2,
-      opponent: "Mike Johnson",
-      problem: "Dynamic Programming",
-      result: "Lost",
-      time: "5h ago",
-      timeSpent: "45:00",
-      rating: 2100,
-      ratingChange: "-12",
-    },
-    {
-      id: 3,
-      opponent: "Emma Davis",
-      problem: "Graph Algorithms",
-      result: "Won",
-      time: "1d ago",
-      timeSpent: "35:15",
-      rating: 1920,
-      ratingChange: "+18",
-    },
-    // Add more duel entries as needed
-  ];
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userResponse = await axios.get(
+          "http://localhost:3000/api/v1/users/getCurrentUser",
+          {
+            withCredentials: true,
+          }
+        );
+        setCurrentUserId(userResponse.data.data._id);
 
-  const filteredDuels =
-    filter === "all"
-      ? allDuels
-      : allDuels.filter((duel) => duel.result === filter);
+        const duelResponse = await axios.get(
+          "http://localhost:3000/api/v1/duel/recentDuels",
+          {
+            withCredentials: true,
+          }
+        );
+        setDuels(duelResponse.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const filteredDuels = duels.filter((duel) => {
+    if (filter === "all") return true;
+    const isWinner = duel.winner === currentUserId;
+    return filter === "Won" ? isWinner : !isWinner;
+  });
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -71,41 +67,44 @@ const DuelHistory = () => {
       </div>
 
       <div className="space-y-4">
-        {filteredDuels.map((duel) => (
-          <div
-            key={duel.id}
-            onClick={() => setSelectedDuel(duel)} // Set the selected duel on click
-            className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-          >
-            <div className="flex items-center gap-4">
-              <Users className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              <div>
-                <p className="font-medium text-gray-900 dark:text-white">
-                  vs {duel.opponent}
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {duel.problem}
-                </p>
+        {filteredDuels.map((duel) => {
+          const opponent =
+            duel.user1[0]._id === currentUserId ? duel.user2[0] : duel.user1[0];
+          const result = duel.winner === currentUserId ? "Won" : "Lost";
+
+          return (
+            <div
+              key={duel._id}
+              onClick={() => setSelectedDuel(duel)}
+              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+            >
+              <div className="flex items-center gap-4">
+                <Users className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-white">
+                    vs {opponent?.username || "Unknown"}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {duel.problem.name}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <span
+                  className={`font-medium ${
+                    result === "Won" ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {result}
+                </span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {new Date(duel.startTime).toLocaleString()}
+                </span>
+                <ArrowRight className="w-5 h-5 text-gray-400" />
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <span
-                className={`font-medium ${
-                  {
-                    Won: "text-green-500",
-                    Lost: "text-red-500",
-                  }[duel.result]
-                }`}
-              >
-                {duel.result}
-              </span>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {duel.time}
-              </span>
-              <ArrowRight className="w-5 h-5 text-gray-400" />
-            </div>
-          </div>
-        ))}
+          );
+        })}
 
         {filteredDuels.length === 0 && (
           <div className="text-center py-10 text-gray-600 dark:text-gray-400">
@@ -114,7 +113,7 @@ const DuelHistory = () => {
         )}
 
         <div
-          onClick={() => navigate(-1)} // Go back to the previous page
+          onClick={() => navigate(-1)}
           className="flex items-center justify-center p-3 mt-4 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition"
         >
           <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -126,7 +125,8 @@ const DuelHistory = () => {
       {selectedDuel && (
         <DuelDetails
           duel={selectedDuel}
-          onClose={() => setSelectedDuel(null)} // Close the details view
+          
+          onClose={() => setSelectedDuel(null)}
         />
       )}
     </div>

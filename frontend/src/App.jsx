@@ -7,7 +7,7 @@ import DashBoard from "./pages/user/DashBoard";
 import IUPCDetails from "./pages/user/IUPCDetails";
 import Duel from "./pages/user/Duel";
 import DuelRoom from "./pages/user/DuelRoom";
-import DuelHistory from "./pages/user/Duelhistory";
+import DuelHistory from "./pages/user/DuelHistory";
 import LeaderBoard from "./pages/user/LeaderBoard";
 import CFProfile from "./pages/user/CFProfile";
 import Sidebar from "./components/Sidebar";
@@ -75,7 +75,6 @@ function AppContent() {
       console.error("Failed to accept duel request:", error);
     }
   };
-
   const handleReject = async (id) => {
     try {
       // console.log(`Rejected duel request with id: ${id}`);

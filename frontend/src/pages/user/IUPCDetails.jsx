@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const IUPCDetails = () => {
   const [contests, setContests] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchContests = async () => {
@@ -13,7 +14,6 @@ const IUPCDetails = () => {
         const response = await axios.get(
           "http://localhost:3000/api/v1/iupcs/get-iupc"
         );
-        // Assuming the API response is structured as response.data.data
         setContests(response.data.data);
       } catch (error) {
         console.error("Error fetching contests:", error);
@@ -43,11 +43,26 @@ const IUPCDetails = () => {
     window.open(googleCalendarUrl, "_blank");
   };
 
+  const filteredContests = contests.filter(
+    (contest) =>
+      contest.contestName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contest.host.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
         Upcoming IUPCs
       </h1>
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search IUPC (Contest Name or Host)"
+          className="p-2 w-full rounded-md border border-gray-300 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
       <div className="dark:bg-gray-800 rounded-xl shadow-sm p-6">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -62,9 +77,9 @@ const IUPCDetails = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {contests.map((contest) => (
+            {filteredContests.map((contest) => (
               <tr
-                key={contest.id} // Ensure each contest has a unique id
+                key={contest.id}
                 className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
