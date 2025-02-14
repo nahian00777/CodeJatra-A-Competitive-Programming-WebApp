@@ -64,6 +64,7 @@ export const createDuel = asyncHandler(async (req, res) => {
     user1: [user1],
     user2: [user2],
     problem: {
+      name: selectedProblem.name,
       contestId: selectedProblem.contestId,
       index: selectedProblem.index,
     },
@@ -95,7 +96,12 @@ export const dropDuel = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Duel dropped successfully"));
 });
 
-async function updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingChangeLoser) {
+async function updateDuelRecords(
+  winnerId,
+  loserId,
+  ratingChangeWinner,
+  ratingChangeLoser
+) {
   try {
     // Retrieve both user documents
     const [winner, loser] = await Promise.all([
@@ -104,14 +110,13 @@ async function updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingCh
     ]);
 
     if (!winner || !loser) {
-      throw new Error('Winner or loser not found');
+      throw new Error("Winner or loser not found");
     }
 
-    
     // Current date for both entries
     const duelKey = new Date().toISOString();
     const currentDate = new Date();
-    
+
     // Update winner's stats
     winner.currentDuelRating += ratingChangeWinner;
     winner.duelWon += 1;
@@ -119,14 +124,14 @@ async function updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingCh
 
     // Format the date to 'DD/MM/YYYY'
     const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
     const year = date.getFullYear();
     const formattedDate = `${day}/${month}/${year}`; // e.g., '05/11/2023'
 
     // Add the new rating to the history
     winner.duelRatingHistory.push({
-      date: formattedDate, 
+      date: formattedDate,
       newRating: winner.currentDuelRating,
     });
 
@@ -139,14 +144,14 @@ async function updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingCh
       date: formattedDate,
       newRating: loser.currentDuelRating,
     });
-    
+
     // Save both users
     // console.log(winner)
     await Promise.all([winner.save(), loser.save()]);
 
     // console.log('Duel records updated successfully for both winner and loser!');
   } catch (error) {
-    console.error('Error updating duel records:', error);
+    console.error("Error updating duel records:", error);
     // Handle errors appropriately
   }
 }
@@ -251,14 +256,12 @@ export const completeDuel = asyncHandler(async (req, res) => {
 
   }
 
-  
   const winner = await User.findById(winnerId);
-  
+
   // Call the function with the winner's and loser's IDs and rating changes
-  const ratingChangeWinner = 25;     // Positive number for winner
-  const ratingChangeLoser = -25;     // Negative number for loser
-  
-  
+  const ratingChangeWinner = 25; // Positive number for winner
+  const ratingChangeLoser = -25; // Negative number for loser
+
   updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingChangeLoser);
   
   // Update the duel status to finished and set the winner
@@ -404,8 +407,7 @@ export const fetchDuelStats = asyncHandler(async (req, res) => {
     totalDuels: user.duelRatingHistory.length,
     avatar: user.avatar,
     duelRatingHistory: user.duelRatingHistory,
-  }
-
+  };
 
   return res.status(200).json(data);
 });
@@ -425,3 +427,19 @@ export const checkInvitation = asyncHandler(async (req, res) => {
       new ApiResponse(200, { invitationAccepted: duel.invitationAccepted })
     );
 });
+
+export const recentDuels = asyncHandler(async (req, res) => {
+  // console.log(req.user);
+  const userId = req.user._id;
+  // console.log(userId);
+  if (!userId) {
+    throw new ApiError(404, "User not found");
+  }
+  const duels = await Duel.find({
+    $or: [{ user1: userId }, { user2: userId }],
+  })
+    .sort({ createdAt: -1 })
+    .populate("user1 user2", "username email handle");
+  return res.status(200).json(new ApiResponse(200, duels));
+});
+

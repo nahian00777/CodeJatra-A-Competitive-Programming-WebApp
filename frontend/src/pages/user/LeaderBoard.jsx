@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ArrowUp, ArrowDown, Users, ArrowRight, Search } from "lucide-react";
+import { ArrowUp, ArrowDown, Users } from "lucide-react";
 import axios from "axios";
 
 const LeaderboardCard = ({ children }) => (
@@ -19,15 +19,7 @@ const LeaderboardCard = ({ children }) => (
 const Leaderboard = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [searchQuery, setSearchQuery] = useState("");
-  const [leaderboardData, setleaderboardData] = useState([]);
-
-  const leaderboard = [
-    { name: "Alex Chen", rating: 2150 },
-    { name: "Maria Garcia", rating: 2080 },
-    { name: "John Smith", rating: 2045 },
-    { name: "Sophia Johnson", rating: 2015 },
-    { name: "Chris Evans", rating: 1990 },
-  ];
+  const [leaderboardData, setLeaderboardData] = useState([]);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -36,7 +28,7 @@ const Leaderboard = () => {
           `http://localhost:3000/api/v1/users/fetchLeaderboard`
         );
 
-        setleaderboardData(response.data);
+        setLeaderboardData(response.data);
       } catch (error) {
         console.error("Error fetching leaderboard data: ", error);
       }
@@ -45,9 +37,11 @@ const Leaderboard = () => {
     fetchLeaderboard();
   }, []);
 
-  const filteredData = leaderboardData.filter((player) =>
-    player.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredData = leaderboardData
+    .map((player, index) => ({ ...player, originalIndex: index }))
+    .filter((player) =>
+      player.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   const sortedData = [...filteredData].sort((a, b) =>
     sortOrder === "desc" ? b.rating - a.rating : a.rating - b.rating
@@ -63,7 +57,7 @@ const Leaderboard = () => {
               id="searchPlayer"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter player name..."
+              placeholder="Enter player name"
               className="mt-3 p-2 pl-10 block w-64 rounded-md border border-gray-300 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -81,14 +75,14 @@ const Leaderboard = () => {
         </div>
 
         <div className="space-y-4">
-          {sortedData.map((player, index) => (
+          {sortedData.map((player) => (
             <div
-              key={index}
+              key={player.originalIndex}
               className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <div className="flex items-center gap-3">
                 <span className="text-lg font-semibold text-gray-600 dark:text-gray-400">
-                  #{index + 1}
+                  #{player.originalIndex + 1}
                 </span>
                 <div className="flex items-center gap-3">
                   <Users className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -104,8 +98,7 @@ const Leaderboard = () => {
                 <button
                   onClick={() => console.log(`View profile for ${player.name}`)}
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                >
-                </button>
+                ></button>
               </div>
             </div>
           ))}

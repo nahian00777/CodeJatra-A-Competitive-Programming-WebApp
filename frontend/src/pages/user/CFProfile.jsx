@@ -1,18 +1,31 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
-import { Trophy, Users } from 'lucide-react';
-import { useSelector } from 'react-redux';
-import axios from 'axios';
-import { asyncHandler } from '../../../../backend/utils/AsyncHandler';
+import React from "react";
+import { useEffect, useState } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+} from "recharts";
+import { Trophy, Users } from "lucide-react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { asyncHandler } from "../../../../backend/utils/AsyncHandler";
 
 // Mock data - replace with actual API data
 const duelRatingHistory = [
-  { date: '2023-01', rating: 1200 },
-  { date: '2023-02', rating: 1250 },
-  { date: '2023-03', rating: 1300 },
-  { date: '2023-04', rating: 1280 },
-  { date: '2023-05', rating: 1350 },
+  { date: "2023-01", rating: 1200 },
+  { date: "2023-02", rating: 1250 },
+  { date: "2023-03", rating: 1300 },
+  { date: "2023-04", rating: 1280 },
+  { date: "2023-05", rating: 1350 },
 ];
 
 const colors = ["#4CAF50", "#2196F3", "#00BCD4", "#9C27B0", "#E91E63"];
@@ -20,9 +33,7 @@ const colors = ["#4CAF50", "#2196F3", "#00BCD4", "#9C27B0", "#E91E63"];
 function CFProfile() {
   const username = useSelector((state) => state.user.username);
   const handle = useSelector((state) => state.user.handle);
-  const profilePic = useSelector((state) => state.user.profilePic);
 
-  
   const [codeforcesRatingHistory, setCodeforcesRatingHistory] = useState([]);
   const [duelRatingHistory, setduelRatingHistory] = useState([]);
   const [submissionStats, setsubmissionStats] = useState([]);
@@ -64,7 +75,8 @@ function CFProfile() {
         );
 
         const leaderboardData = response.data;
-        const userIndex = leaderboardData.findIndex(user => user.handle === handle) + 1;
+        const userIndex =
+          leaderboardData.findIndex((user) => user.handle === handle) + 1;
         setPosition(userIndex);
       } catch (error) {
         console.error("Error fetching leaderboard data: ", error);
@@ -76,7 +88,6 @@ function CFProfile() {
 
   useEffect(() => {
     const fetchRatingHistory = asyncHandler(async () => {
-
       // console.log( "fetchRatingHistory executed " +handle);
 
       const response = await axios.get(
@@ -92,11 +103,8 @@ function CFProfile() {
     fetchRatingHistory();
   }, []);
 
-
   useEffect(() => {
     const fetchSubmissionStats = asyncHandler(async () => {
-
-
       const response = await axios.get(
         "http://localhost:3000/api/v1/problems/fetchSubmissionStats",
         {
@@ -111,10 +119,8 @@ function CFProfile() {
     fetchSubmissionStats();
   }, []);
 
-
   useEffect(() => {
     const fetchRatingCount = asyncHandler(async () => {
-
       const response = await axios.get(
         "http://localhost:3000/api/v1/problems/fetchRatingCount",
         {
@@ -129,8 +135,6 @@ function CFProfile() {
     fetchRatingCount();
   }, []);
 
-  
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="text-center mb-12">
@@ -143,7 +147,9 @@ function CFProfile() {
         </div>
         <h1 className="text-3xl text-gray-400 font-bold mb-2">{username}</h1>
         <p className="text-gray-400 mb-1">{handle}</p>
-        <p className="text-xl font-semibold text-blue-600">Duel Rating: {Rating}</p>
+        <p className="text-xl font-semibold text-blue-600">
+          Duel Rating: {Rating}
+        </p>
       </div>
 
       {/* Dual Rating Section */}
@@ -208,8 +214,10 @@ function CFProfile() {
               nameKey="status"
             >
               {submissionStats.map((entry, index) => (
-                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} /> // Assign color
-                 
+                <Cell
+                  key={`cell-${index}`}
+                  fill={colors[index % colors.length]}
+                /> // Assign color
               ))}
             </Pie>
             <Tooltip />
@@ -221,7 +229,7 @@ function CFProfile() {
       {/* Solved Problems Rating Distribution */}
       <div className="bg-gray-300 p-6 rounded-lg shadow-md flex flex-col items-center">
         <h2 className="text-xl font-bold mb-4">Solved Problems by Rating</h2>
-        <div className='flex justify-center w-full'>
+        <div className="flex justify-center w-full">
           <BarChart width={1200} height={400} data={solvedRatings}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="rating" />
