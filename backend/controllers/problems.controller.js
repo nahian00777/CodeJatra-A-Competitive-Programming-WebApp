@@ -12,7 +12,6 @@ const visited = new Set();
 const fetchProblems = asyncHandler(async (req, res) => {
   // 1. Get the handle from the request body
   const { handle } = req.body;
-  // console.log("fetching problems of " + handle);
 
   // 2. Fetch the user's solved problems from Codeforces API
   const APIresponse = await axios.get(
@@ -28,7 +27,6 @@ const fetchProblems = asyncHandler(async (req, res) => {
     const solver = handle;
     const solved = response.verdict === "OK";
 
-    // Check if contestId length > 4 and rating is not defined
     // create map for verdicts
     if (response.verdict === "OK") {
       verditCounts["Accepted"] = (verditCounts["Accepted"] || 0) + 1;
@@ -51,7 +49,7 @@ const fetchProblems = asyncHandler(async (req, res) => {
 
     // Skip this iteration if the conditions are met
     if (!rating) {
-      continue; // Skip this iteration if the conditions are met
+      continue;
     }
 
 
@@ -83,8 +81,6 @@ const fetchProblems = asyncHandler(async (req, res) => {
     }
   }
 
-  // console.log(`Total inserted problems: ${insertedCount}`);
-  // console.log(ratingCounts);
 
   const result = await User.findOneAndUpdate(
     { handle: handle }, // Find the user by their unique ID
@@ -94,9 +90,6 @@ const fetchProblems = asyncHandler(async (req, res) => {
     }, // Update the verdictHistory field
     { new: true } // Return the updated document
   );
-  if(result){
-    console.log("Updated verdict history for user: ", result);
-  }
 
   // 4. Return success response with inserted problems
   return res.status(200).json(
@@ -116,7 +109,6 @@ const deleteProblems = asyncHandler(async (req, res) => {
       ],
     });
 
-    // console.log(`Deleted ${result.deletedCount} problems.`);
 
     // Return a success response with the number of deleted problems
     return res.status(200).json({
@@ -133,6 +125,79 @@ const deleteProblems = asyncHandler(async (req, res) => {
 
 ///// get the count of verdicts
 const fetchSubmissionStats = asyncHandler(async (req, res) => {
+
+  // const tempRatingCounts = {};
+  // const tempVerditCounts = {};
+  // const tempRatingVisited = new Set();
+  // const tempVerdictvisited = new Set();
+
+  // const { handle } = req.body;
+
+  // // 2. Fetch the user's solved problems from Codeforces API
+  // const APIresponse = await axios.get(
+  //   `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=10000`
+  // );
+  // const responses = APIresponse.data.result;
+
+  // for (const response of responses) {
+
+  //   const { rating, name } = response.problem;
+
+  //   // create map for verdicts
+  //   if (response.verdict === "OK") {
+  //     verditCounts["Accepted"] = (verditCounts["Accepted"] || 0) + 1;
+  //   } else if (
+  //     response.verdict === "WRONG_ANSWER" ||
+  //     response.verdict === "TIME_LIMIT_EXCEEDED" ||
+  //     response.verdict === "MEMORY_LIMIT_EXCEEDED"
+  //   ) {
+  //     verditCounts[response.verdict] =
+  //       (verditCounts[response.verdict] || 0) + 1;
+  //   } else {
+  //     verditCounts["Others"] = (verditCounts["Others"] || 0) + 1;
+  //   }
+
+  //   // creating the map for barchart of solved rating!
+  //   if (response.verdict === "OK" && rating != null && !visited.has(name)) {
+  //     tempRatingCounts.add(name);
+  //     ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
+  //   }
+
+  //   // Skip this iteration if the conditions are met
+  //   if (!rating) {
+  //     continue;
+  //   }
+
+
+  //   // Check if the problem already exists
+  //   const existingProblem = await Problems.findOne({
+  //     contestId,
+  //     index,
+  //     solver,
+  //   });
+
+  //   if (!existingProblem) {
+  //     // Insert new problem
+  //     const problem = await Problems.create({
+  //       contestId,
+  //       index,
+  //       rating,
+  //       name,
+  //       solver,
+  //       solved,
+  //     });
+  //     insertedCount++;
+  //   } else {
+  //     // Update existing problem
+  //     if (solved && !existingProblem.solved) {
+  //       existingProblem.solved = true;
+  //       await existingProblem.save();
+  //       updatedcnt++;
+  //     }
+  //   }
+  // }
+
+  
   const { handle } = req.query;
   const user = await User.findOne({ handle: handle });
   
@@ -161,7 +226,6 @@ const fetchRatingHistory = asyncHandler(async (req, res) => {
   // 1. Get the handle from the request body
   const { handle } = req.query;
 
-  // console.log("fetching rating history of " + handle);
 
   // 2. Fetch the user's rating history from Codeforces API
   const APIresponse = await axios.get(
@@ -184,7 +248,6 @@ const fetchRatingHistory = asyncHandler(async (req, res) => {
     return { date: formattedDate, newRating };
   });
   // 4. Return success response with rating history
-  // console.log(formattedRatings);
   return res.status(200).json(formattedRatings);
 });
 

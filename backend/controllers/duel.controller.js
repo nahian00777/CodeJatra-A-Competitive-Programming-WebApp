@@ -80,7 +80,7 @@ export const createDuel = asyncHandler(async (req, res) => {
 export const dropDuel = asyncHandler(async (req, res) => {
   const { duelId } = req.params;
 
-  console.log(duelId);
+  // console.log(duelId);
 
   // Find and delete the duel
   const duel = await Duel.findByIdAndDelete(duelId);
@@ -129,9 +129,7 @@ async function updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingCh
       date: formattedDate, 
       newRating: winner.currentDuelRating,
     });
-    
-    console.log("This is the Duel Rating History")
-    console.log(winner.duelRatingHistory)
+
     
     // Update loser's stats
     loser.currentDuelRating += ratingChangeLoser; // ratingChangeLoser is typically negative
@@ -146,7 +144,7 @@ async function updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingCh
     // console.log(winner)
     await Promise.all([winner.save(), loser.save()]);
 
-    console.log('Duel records updated successfully for both winner and loser!');
+    // console.log('Duel records updated successfully for both winner and loser!');
   } catch (error) {
     console.error('Error updating duel records:', error);
     // Handle errors appropriately
@@ -174,7 +172,6 @@ export const completeDuel = asyncHandler(async (req, res) => {
 
   // Fetch problem details
   const { contestId, index } = duel.problem;
-  // console.log(contestId, index);
   // Fetch submissions from Codeforces for both users
   const user1Submissions = await axios.get(
     `https://codeforces.com/api/user.status?handle=${user1Handle}&from=1&count=10`
@@ -182,12 +179,8 @@ export const completeDuel = asyncHandler(async (req, res) => {
   const user2Submissions = await axios.get(
     `https://codeforces.com/api/user.status?handle=${user2Handle}&from=1&count=10`
   );
-  // console.log(user1Submissions.data.result);
-  // console.log(user2Submissions.data.result);
   // Find the earliest submission time for the problem\
-  // console.log(user1Submissions.data.result.problem.contestId);
-  // console.log(user1Submissions.data.result);
-  // console.log(user1Submissions.data.result.verdict);
+
   let user1SolvedTime = null;
   let user2SolvedTime = null;
   user1Submissions.data.result.forEach((submission) => {
@@ -209,7 +202,6 @@ export const completeDuel = asyncHandler(async (req, res) => {
       user2SolvedTime = submission.creationTimeSeconds;
     }
   });
-  // console.log(user1SolvedTime, user2SolvedTime);
   // Check if neither user has solved the problem
   if (!user1SolvedTime && !user2SolvedTime) {
     return res
@@ -256,10 +248,7 @@ export const completeDuel = asyncHandler(async (req, res) => {
     console.log("No winner determined");
     // You might want to throw an error or return a specific response here
   } else {
-    console.log("User1: ", duel.user1[0]._id);
-    console.log("User2: ", duel.user2[0]._id);
-    console.log("Winner ID:", winnerId);
-    console.log("Loser ID:", loserId);
+
   }
 
   
@@ -271,8 +260,6 @@ export const completeDuel = asyncHandler(async (req, res) => {
   
   
   updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingChangeLoser);
-  
-  // console.log(xyz)
   
   // Update the duel status to finished and set the winner
   duel.status = "finished";
