@@ -441,3 +441,25 @@ export const recentDuels = asyncHandler(async (req, res) => {
     .populate("user1 user2", "username email handle");
   return res.status(200).json(new ApiResponse(200, duels));
 });
+
+export const listUserDuel = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  if (!userId) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Fetch all duels for the user
+  const duels = await Duel.find({
+    $or: [{ user1: userId }, { user2: userId }],
+    status: "ongoing",
+  }).populate("user1 user2");
+
+  if (!duels) {
+    throw new ApiError(404, "No ongoing duels found for the user");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, duels, "User duels retrieved successfully"));
+});

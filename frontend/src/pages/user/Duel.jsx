@@ -48,6 +48,7 @@ function Duel() {
   const [selectedDuel, setSelectedDuel] = useState(null);
   const [duels, setDuels] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [ongoingChallenge, setOngoingChallenge] = useState(false);
 
   const userName = useSelector((state) => state.user.username);
   const handle = useSelector((state) => state.user.handle);
@@ -197,6 +198,38 @@ function Duel() {
     winRate: 66.7,
     currentStreak: 5,
   };
+  // New useEffect for checking ongoing challenge every 3 seconds
+  useEffect(() => {
+    const checkOngoingChallenge = async () => {
+      try {
+        const ongoingResponse = await axios.get(
+          "http://localhost:3000/api/v1/duel/ongoingChallenge",
+          {
+            withCredentials: true,
+          }
+        );
+        // console.log("Ongoing challenge response:", ongoingResponse.data.data.length);
+        if (ongoingResponse.data.data.length > 0) {
+          setOngoingChallenge(true);
+        } else {
+          setOngoingChallenge(false);
+        }
+      } catch (error) {
+        console.error("Error checking ongoing challenge:", error);
+      }
+    };
+
+    const interval = setInterval(checkOngoingChallenge, 5000); // Check every 1 seconds
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
+  const handleOngoingChallengeClick = () => {
+    if (ongoingChallenge) {
+      navigate("/user/ongoing-challenge");
+    } else {
+      alert("There is no ongoing challenge at the moment.");
+    }
+  };
 
   const navigate = useNavigate();
 
@@ -228,7 +261,7 @@ function Duel() {
 
           {/* Ongoing Challenge Button */}
           <button
-            onClick={() => navigate("/user/ongoing-challenge")} // Navigate to the Ongoing Challenge page
+            onClick={handleOngoingChallengeClick} // Navigate to the Ongoing Challenge page
             className="px-6 py-3 rounded-lg flex items-center gap-2 bg-green-600 text-white font-medium hover:bg-green-700 transition-all"
           >
             <PlayCircle className="w-5 h-5" />
