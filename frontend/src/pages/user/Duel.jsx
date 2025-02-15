@@ -199,35 +199,49 @@ function Duel() {
     currentStreak: 5,
   };
   // New useEffect for checking ongoing challenge every 3 seconds
-  useEffect(() => {
-    const checkOngoingChallenge = async () => {
-      try {
-        const ongoingResponse = await axios.get(
-          "http://localhost:3000/api/v1/duel/ongoingChallenge",
-          {
-            withCredentials: true,
-          }
-        );
-        // console.log("Ongoing challenge response:", ongoingResponse.data.data.length);
-        if (ongoingResponse.data.data.length > 0) {
-          setOngoingChallenge(true);
-        } else {
-          setOngoingChallenge(false);
+  // useEffect(() => {
+  //   const checkOngoingChallenge = async () => {
+  //     try {
+  //       const ongoingResponse = await axios.get(
+  //         "http://localhost:3000/api/v1/duel/ongoingChallenge",
+  //         {
+  //           withCredentials: true,
+  //         }
+  //       );
+  //       console.log("Ongoing challenge response:", ongoingResponse.data.data.length);
+  //       if (ongoingResponse.data.data.length > 0) {
+  //         setOngoingChallenge(true);
+  //       } else {
+  //         setOngoingChallenge(false);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking ongoing challenge:", error);
+  //     }
+  //   };
+
+  //   const interval = setInterval(checkOngoingChallenge, 5000); // Check every 1 seconds
+  //   return () => clearInterval(interval); // Cleanup on unmount
+  // }, []);
+
+  const handleOngoingChallengeClick = async () => {
+    try {
+      const ongoingResponse = await axios.get(
+        "http://localhost:3000/api/v1/duel/ongoingChallenge",
+        {
+          withCredentials: true,
         }
-      } catch (error) {
-        console.error("Error checking ongoing challenge:", error);
+      );
+      console.log(
+        "Ongoing challenge response:",
+        ongoingResponse.data.data.length
+      );
+      if (ongoingResponse.data.data.length > 0) {
+        navigate("/user/ongoing-challenge");
+      } else {
+        alert("There is no ongoing challenge at the moment.");
       }
-    };
-
-    const interval = setInterval(checkOngoingChallenge, 5000); // Check every 1 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
-
-  const handleOngoingChallengeClick = () => {
-    if (ongoingChallenge) {
-      navigate("/user/ongoing-challenge");
-    } else {
-      alert("There is no ongoing challenge at the moment.");
+    } catch (error) {
+      console.error("Error checking ongoing challenge:", error);
     }
   };
 

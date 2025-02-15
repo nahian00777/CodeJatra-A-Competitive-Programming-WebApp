@@ -80,7 +80,7 @@ function AppContent() {
       // console.log(`Rejected duel request with id: ${id}`);
       setNotifications(notifications.filter((x) => x.id !== id));
       await axios.delete(
-        `http://localhost:3000/api/v1/duel/cancelDuel/${id}`,
+        `http://localhost:3000/api/v1/duel/dropDuel/${id}`,
         {},
         {
           withCredentials: true,

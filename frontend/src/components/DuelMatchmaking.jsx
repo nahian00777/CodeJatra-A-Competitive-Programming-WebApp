@@ -148,8 +148,22 @@ const DuelMatchmaking = ({ onClose }) => {
     }
   };
 
-  const handleChallenge = (opponent) => {
-    sendDuelRequest(opponent.handle, selectedRating);
+  const handleChallenge = async (opponent) => {
+    // have to check if already an ongoing duel with the opponent
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/duel/ongoingChallenge",
+        { withCredentials: true }
+      );
+      console.log(response.data.data);
+      if (response.data.data.length === 0) {
+        sendDuelRequest(opponent.handle, selectedRating);
+      } else {
+        alert("You already have an ongoing duel with this user.");
+      }
+    } catch (error) {
+      console.error("Error checking ongoing duel:", error);
+    }
   };
 
   const filteredUsers = users.filter(
