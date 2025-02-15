@@ -70,24 +70,27 @@ function AppContent() {
 
       // Pass the duelId to the ongoing-challenge page
       // console.log("Duel data:", duelDataFromOp);
-      navigate("/user/ongoing-challenge", { state: { duelDataFromOp, accepted: true } });
+      navigate("/user/ongoing-challenge", {
+        state: { duelDataFromOp, accepted: true },
+      });
     } catch (error) {
       console.error("Failed to accept duel request:", error);
     }
   };
   const handleReject = async (id) => {
     try {
-      // console.log(`Rejected duel request with id: ${id}`);
-      setNotifications(notifications.filter((x) => x.id !== id));
-      await axios.delete(
-        `http://localhost:3000/api/v1/duel/dropDuel/${id}`,
+      const response = await axios.patch(
+        `http://localhost:3000/api/v1/duel/rejectDuel/${id}`,
         {},
         {
           withCredentials: true,
         }
       );
+      // const duelDataFromOp = response.data.data;
+      // console.log("Duel full data:", duelData);
+      setNotifications(notifications.filter((x) => x.id !== id));
     } catch (error) {
-      console.error("Failed to reject duel request:", error);
+      console.error("Failed to accept duel request:", error);
     }
   };
 

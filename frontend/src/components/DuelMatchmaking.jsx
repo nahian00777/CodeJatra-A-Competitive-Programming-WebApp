@@ -54,7 +54,7 @@ const DuelMatchmaking = ({ onClose }) => {
       const response = await axios.get(
         `http://localhost:3000/api/v1/duel/checkInvitation/${duelId}`
       );
-      return response.data.data.invitationAccepted;
+      return response.data.data;
     } catch (error) {
       console.error("Error checking invitation status:", error);
       return false;
@@ -96,14 +96,21 @@ const DuelMatchmaking = ({ onClose }) => {
 
         const duelId = response.data.data._id;
         const intervalId = setInterval(async () => {
-          const invitationAccepted = await checkInvitationStatus(duelId);
-          if (invitationAccepted) {
+          const invitation = await checkInvitationStatus(duelId);
+          console.log("Invitation status:", invitation);
+          if (invitation.invitationAccepted) {
             clearInterval(intervalId);
             clearTimeout(timerId);
             clearInterval(countdownId);
             setLoading(false);
             dispatch(setDuelData(response.data.data));
             navigate("/user/ongoing-challenge");
+          } else if (invitation.invitationRejected) {
+            clearInterval(intervalId);
+            clearTimeout(timerId);
+            clearInterval(countdownId);
+            setLoading(false);
+            setErrorMessage("Invitation rejected by opponent.");
           }
         }, 3000);
 

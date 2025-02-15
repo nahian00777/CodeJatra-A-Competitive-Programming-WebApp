@@ -168,7 +168,7 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
                 onClick={handleDropDuel}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
-                Drop Duel
+                Resign From Duel
               </button>
 
               {message && (

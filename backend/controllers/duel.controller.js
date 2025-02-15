@@ -344,6 +344,31 @@ export const listUserDuels = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, duels, "User duels retrieved successfully"));
 });
 
+export const rejectDuel = asyncHandler(async (req, res) => {
+  const { duelId } = req.params;
+
+  // Fetch the duel
+  const duel = await Duel.findById(duelId).populate("user1 user2");
+  if (!duel) {
+    throw new ApiError(404, "Duel not found");
+  }
+
+  // Check if the duel is in the waiting state
+  if (duel.status !== "waiting") {
+    throw new ApiError(400, "Duel is not in a state to be accepted");
+  }
+
+  // Update the duel status to ongoing and set invitationAccepted to true
+  duel.status = "rejected";
+  duel.invitationRejected = true;
+  duel.startTime = new Date();
+  await duel.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, duel, "Duel rejected successfully"));
+});
+
 // export const cancelDuel = asyncHandler(async (req, res) => {
 //   const { duelId } = req.params;
 
@@ -422,7 +447,7 @@ export const checkInvitation = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { invitationAccepted: duel.invitationAccepted })
+      new ApiResponse(200, { invitationAccepted: duel.invitationAccepted, invitationRejected: duel.invitationRejected }, "Invitation status retrieved successfully")
     );
 });
 

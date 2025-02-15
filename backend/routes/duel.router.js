@@ -11,6 +11,7 @@ import {
   checkInvitation,
   recentDuels,
   listUserDuel,
+  rejectDuel,
 } from "../controllers/duel.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js"; // Assuming you have authentication middleware
 
@@ -24,6 +25,7 @@ duelRouter.route("/fetchDuelStats").get(fetchDuelStats);
 
 // New routes
 duelRouter.route("/acceptDuel/:duelId").patch(verifyJWT, acceptDuel);
+duelRouter.route("/rejectDuel/:duelId").patch(verifyJWT, rejectDuel);
 duelRouter.route("/listUserDuels").get(verifyJWT, listUserDuels);
 // duelRouter.route("/cancelDuel/:duelId").delete(verifyJWT, cancelDuel);
 duelRouter.route("/checkNew").get(verifyJWT, checkNewDuels); // Add this route

@@ -11,10 +11,14 @@ const duelSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["waiting", "ongoing", "finished"],
+      enum: ["waiting", "ongoing", "finished", "rejected"],
       default: "waiting",
     },
     invitationAccepted: {
+      type: Boolean,
+      default: false,
+    },
+    invitationRejected: {
       type: Boolean,
       default: false,
     },
