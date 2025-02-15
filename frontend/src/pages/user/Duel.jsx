@@ -12,7 +12,7 @@ import axios from "axios";
 import DuelMatchmaking from "../../components/DuelMatchmaking";
 import DuelDetails from "../../components/DuelDetails";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+// import { activeItem } from "../../components/Sidebar";
 import { useSelector } from "react-redux";
 
 const DuelCard = ({ title, children }) => (
@@ -289,7 +289,7 @@ function Duel() {
               className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
               onClick={() => {
                 navigate("/user/leaderboard");
-                activeItem("leaderboard");
+                // activeItem("leaderboard");
               }} // Redirect to the leaderboard page
             >
               View Full Leaderboard

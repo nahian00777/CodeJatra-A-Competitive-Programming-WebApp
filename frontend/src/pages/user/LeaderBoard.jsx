@@ -57,7 +57,7 @@ const Leaderboard = () => {
               id="searchPlayer"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter player name"
+              placeholder="Enter CF handle name"
               className="mt-3 p-2 pl-10 block w-64 rounded-md border border-gray-300 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
