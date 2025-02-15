@@ -135,7 +135,6 @@ async function updateDuelRecords(
       newRating: winner.currentDuelRating,
     });
 
-    
     // Update loser's stats
     loser.currentDuelRating += ratingChangeLoser; // ratingChangeLoser is typically negative
     loser.currentStreak = 0; // Reset streak on loss
@@ -253,7 +252,6 @@ export const completeDuel = asyncHandler(async (req, res) => {
     console.log("No winner determined");
     // You might want to throw an error or return a specific response here
   } else {
-
   }
 
   const winner = await User.findById(winnerId);
@@ -263,7 +261,7 @@ export const completeDuel = asyncHandler(async (req, res) => {
   const ratingChangeLoser = -25; // Negative number for loser
 
   updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingChangeLoser);
-  
+
   // Update the duel status to finished and set the winner
   duel.status = "finished";
   duel.winner = winnerId;
@@ -437,9 +435,9 @@ export const recentDuels = asyncHandler(async (req, res) => {
   }
   const duels = await Duel.find({
     $or: [{ user1: userId }, { user2: userId }],
+    status: "finished",
   })
     .sort({ createdAt: -1 })
     .populate("user1 user2", "username email handle");
   return res.status(200).json(new ApiResponse(200, duels));
 });
-
