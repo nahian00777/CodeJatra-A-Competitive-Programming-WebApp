@@ -14,6 +14,8 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
 
   // Determine which duel data to use
   const duelData = accepted ? duelDataFromOp : storedDuelData;
+  // console.log(accepted);
+  // console.log(duelData);
   // const duelData = location.state?.duelData;
   // const duelDataFromOp = location.state?.duelDataFromOp;
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -147,7 +149,7 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
                 Problem Details
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                {challengeDetails?.problemTitle || "Unknown Problem"}
+                {duelData.problem.name || "Unknown Problem"}
               </p>
               <a
                 href={problemUrl}

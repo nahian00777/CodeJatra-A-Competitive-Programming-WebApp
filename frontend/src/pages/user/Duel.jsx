@@ -231,12 +231,12 @@ function Duel() {
           withCredentials: true,
         }
       );
-      console.log(
-        "Ongoing challenge response:",
-        ongoingResponse.data.data.length
-      );
+      const yourData = ongoingResponse.data.data[0];
+      // console.log("Ongoing challenge response:", ongoingResponse.data.data[0].problem);
       if (ongoingResponse.data.data.length > 0) {
-        navigate("/user/ongoing-challenge");
+        navigate("/user/ongoing-challenge", {
+          state: { duelDataFromOp: yourData, accepted: true },
+        });
       } else {
         alert("There is no ongoing challenge at the moment.");
       }
