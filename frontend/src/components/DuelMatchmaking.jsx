@@ -5,31 +5,17 @@ import { X, Search, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const DuelMatchmaking = ({ onClose }) => {
+const DuelMatchmaking = ({ onClose, onlineUsers }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRating, setSelectedRating] = useState("any");
-  const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30); // Timer state
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/api/v1/users/getOnlineUsers"
-        );
-        if (response.data.success) {
-          setUsers(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
     const fetchCurrentUser = async () => {
       try {
         const response = await axios.get(
@@ -45,7 +31,6 @@ const DuelMatchmaking = ({ onClose }) => {
       }
     };
 
-    fetchUsers();
     fetchCurrentUser();
   }, []);
 
@@ -156,7 +141,6 @@ const DuelMatchmaking = ({ onClose }) => {
   };
 
   const handleChallenge = async (opponent) => {
-    // have to check if already an ongoing duel with the opponent
     try {
       const response = await axios.get(
         "http://localhost:3000/api/v1/duel/ongoingChallenge",
@@ -173,7 +157,7 @@ const DuelMatchmaking = ({ onClose }) => {
     }
   };
 
-  const filteredUsers = users.filter(
+  const filteredUsers = onlineUsers.filter(
     (user) =>
       user._id !== currentUser?._id &&
       user.fullName.toLowerCase().includes(searchQuery.toLowerCase())

@@ -1,4 +1,4 @@
-import React, { act, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   PlayCircle,
   Swords,
@@ -12,11 +12,10 @@ import axios from "axios";
 import DuelMatchmaking from "../../components/DuelMatchmaking";
 import DuelDetails from "../../components/DuelDetails";
 import { useNavigate } from "react-router-dom";
-// import { activeItem } from "../../components/Sidebar";
 import { useSelector } from "react-redux";
 
 const DuelCard = ({ title, children }) => (
-  <div className=" dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+  <div className="dark:bg-gray-800 rounded-xl p-6 shadow-sm">
     <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
       {title}
     </h3>
@@ -39,8 +38,8 @@ const StatItem = ({ icon: Icon, label, value }) => (
 );
 
 function Duel() {
-  const [isSearching, setIsSearching] = useState(false);
   const [showMatchmaking, setShowMatchmaking] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const [duelRequests, setDuelRequests] = useState([]);
   const [filter, setFilter] = useState("all");
   const [duelStat, setduelStat] = useState([]);
@@ -60,37 +59,13 @@ function Duel() {
   });
 
   useEffect(() => {
-    // const fetchDuelRequests = async () => {
-    //   try {
-    //     const response = await axios.get(
-    //       "http://localhost:3000/api/v1/duel/checkNew",
-    //       {
-    //         withCredentials: true,
-    //       }
-    //     );
-
-    //     if (response.data.success) {
-    //       const newRequests = response.data.data;
-    //       setDuelRequests(newRequests);
-    //       // console.log(newRequests.length);
-    //       // newRequests.forEach((request) => {
-    //       //   toast.info(`New duel request from ${request.user1.username}`);
-    //       // });
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching duel requests:", error);
-    //   }
-    // };
-
-    // const intervalDuel = setInterval(fetchDuelRequests, 10000); // Fetch every 10 seconds
-
     const updateActivity = async () => {
       try {
         await axios.post(
           "http://localhost:3000/api/v1/users/updateActivity",
           {},
           {
-            withCredentials: true, // Ensure cookies are sent
+            withCredentials: true,
           }
         );
         console.log("Activity updated");
@@ -99,8 +74,8 @@ function Duel() {
       }
     };
 
-    const interval = setInterval(updateActivity, 10000); // Update every 2 minutes
-    return () => clearInterval({ interval }); // Cleanup on unmount
+    const interval = setInterval(updateActivity, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -174,15 +149,14 @@ function Duel() {
     const fetchDuelStats = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/duel/fetchDuelStats`, // URL
+          `http://localhost:3000/api/v1/duel/fetchDuelStats`,
           {
-            params: { handle }, // Query parameters
+            params: { handle },
             headers: { "Content-Type": "application/json" },
           }
         );
 
         console.log("Duel stats:", response.data);
-        // Handle the response data as needed
         setduelStat(response.data);
       } catch (error) {
         console.error("Error fetching duel stats: ", error);
@@ -191,37 +165,6 @@ function Duel() {
 
     fetchDuelStats();
   }, []);
-
-  const stats = {
-    totalDuels: 48,
-    wins: 32,
-    winRate: 66.7,
-    currentStreak: 5,
-  };
-  // New useEffect for checking ongoing challenge every 3 seconds
-  // useEffect(() => {
-  //   const checkOngoingChallenge = async () => {
-  //     try {
-  //       const ongoingResponse = await axios.get(
-  //         "http://localhost:3000/api/v1/duel/ongoingChallenge",
-  //         {
-  //           withCredentials: true,
-  //         }
-  //       );
-  //       console.log("Ongoing challenge response:", ongoingResponse.data.data.length);
-  //       if (ongoingResponse.data.data.length > 0) {
-  //         setOngoingChallenge(true);
-  //       } else {
-  //         setOngoingChallenge(false);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error checking ongoing challenge:", error);
-  //     }
-  //   };
-
-  //   const interval = setInterval(checkOngoingChallenge, 5000); // Check every 1 seconds
-  //   return () => clearInterval(interval); // Cleanup on unmount
-  // }, []);
 
   const handleOngoingChallengeClick = async () => {
     try {
@@ -232,7 +175,6 @@ function Duel() {
         }
       );
       const yourData = ongoingResponse.data.data[0];
-      // console.log("Ongoing challenge response:", ongoingResponse.data.data[0].problem);
       if (ongoingResponse.data.data.length > 0) {
         navigate("/user/ongoing-challenge", {
           state: { duelDataFromOp: yourData, accepted: true },
@@ -243,6 +185,24 @@ function Duel() {
     } catch (error) {
       console.error("Error checking ongoing challenge:", error);
     }
+  };
+
+  const fetchOnlineUsers = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/users/getOnlineUsers"
+      );
+      if (response.data.success) {
+        setOnlineUsers(response.data.data);
+        setShowMatchmaking(true);
+      }
+    } catch (error) {
+      console.error("Error fetching online users:", error);
+    }
+  };
+
+  const handleStartDuel = () => {
+    fetchOnlineUsers();
   };
 
   const navigate = useNavigate();
@@ -260,30 +220,21 @@ function Duel() {
         </div>
         <div className="flex item-center mx-2 my-2">
           <button
-            onClick={() => setShowMatchmaking(true)}
-            disabled={isSearching}
-            className={`px-6 py-3 mx-5 rounded-lg flex items-center gap-2 text-white font-medium transition-all
-            ${
-              isSearching
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            onClick={handleStartDuel}
+            className="px-6 py-3 mx-5 rounded-lg flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all"
           >
             <Swords className="w-5 h-5" />
-            {isSearching ? "Searching..." : "Start Duel"}
+            Start Duel
           </button>
 
-          {/* Ongoing Challenge Button */}
           <button
-            onClick={handleOngoingChallengeClick} // Navigate to the Ongoing Challenge page
+            onClick={handleOngoingChallengeClick}
             className="px-6 py-3 rounded-lg flex items-center gap-2 bg-green-600 text-white font-medium hover:bg-green-700 transition-all"
           >
             <PlayCircle className="w-5 h-5" />
             Ongoing Challenge
           </button>
         </div>
-
-        {/* Ongoing Challenge Button */}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -336,8 +287,7 @@ function Duel() {
               className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
               onClick={() => {
                 navigate("/user/leaderboard");
-                // activeItem("leaderboard");
-              }} // Redirect to the leaderboard page
+              }}
             >
               View Full Leaderboard
               <ArrowRight className="w-5 h-5" />
@@ -389,9 +339,8 @@ function Duel() {
             );
           })}
 
-          {/* Add this part for full history navigation */}
           <div
-            onClick={() => navigate("/user/duel-history")} // Update with your route
+            onClick={() => navigate("/user/duel-history")}
             className="flex items-center justify-center p-3 mt-4 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition"
           >
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -403,7 +352,10 @@ function Duel() {
       </DuelCard>
 
       {showMatchmaking && (
-        <DuelMatchmaking onClose={() => setShowMatchmaking(false)} />
+        <DuelMatchmaking
+          onClose={() => setShowMatchmaking(false)}
+          onlineUsers={onlineUsers}
+        />
       )}
       {selectedDuel && (
         <DuelDetails
