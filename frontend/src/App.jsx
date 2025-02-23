@@ -32,7 +32,7 @@ function AppContent() {
           withCredentials: true,
         }
       );
-      console.log("Response:", response);
+      // console.log("Response:", response);
 
       if (response.data.statuscode === 200) {
         // Tokens are valid, redirect to duel page
@@ -44,7 +44,6 @@ function AppContent() {
     } catch (error) {
       console.error("Error verifying tokens:", error);
       // If there's an error, redirect to login page
-      navigate("/login");
     }
   };
 
@@ -53,8 +52,6 @@ function AppContent() {
   }, []);
 
   const fetchDuelRequests = async () => {
-    console.log("getting access token", document.cookie.split("=")[1]);
-    console.log("getting refresh token", document.cookie);
     try {
       const response = await axios.get(
         "http://localhost:3000/api/v1/duel/checkNew",
