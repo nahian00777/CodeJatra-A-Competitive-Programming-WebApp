@@ -24,7 +24,37 @@ function AppContent() {
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
 
+  const checkTokensAndRedirect = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/users/getCurrentUser",
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Response:", response);
+
+      if (response.data.statuscode === 200) {
+        // Tokens are valid, redirect to duel page
+        navigate("/user/duel");
+      } else {
+        // Tokens are invalid, redirect to login page
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Error verifying tokens:", error);
+      // If there's an error, redirect to login page
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    checkTokensAndRedirect();
+  }, []);
+
   const fetchDuelRequests = async () => {
+    console.log("getting access token", document.cookie.split("=")[1]);
+    console.log("getting refresh token", document.cookie);
     try {
       const response = await axios.get(
         "http://localhost:3000/api/v1/duel/checkNew",
