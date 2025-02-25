@@ -30,11 +30,17 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
     ? `https://codeforces.com/problemset/problem/${duelData.problem.contestId}/${duelData.problem.index}`
     : "#";
   const opponent = duelData
-    ? { name: duelData.user2[0].handle, rating: "N/A" }
+    ? {
+        name: duelData.user2[0].handle,
+        rating: duelData.user2[0].currentDuelRating,
+      }
     : { name: "Unknown", rating: "N/A" };
 
   const myself = duelData
-    ? { name: duelData.user1[0].handle, rating: "N/A" }
+    ? {
+        name: duelData.user1[0].handle,
+        rating: duelData.user1[0].currentDuelRating,
+      }
     : { name: "Unknown", rating: "N/A" };
 
   const handleCloseAndNavigate = () => {
