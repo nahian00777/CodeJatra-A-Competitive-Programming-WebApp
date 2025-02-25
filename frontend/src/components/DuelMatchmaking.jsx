@@ -264,7 +264,16 @@ const DuelMatchmaking = ({ onClose, onlineUsers }) => {
                           {user.username}
                         </p>
                         <p className="text-sm text-gray-500">
-                          CF Handle: {user.handle}
+                          CF Handle:
+                          <a
+                            href={`https://codeforces.com/profile/${user.handle}`}
+                            className="text-blue-500 hover:underline"
+                            style={{ cursor: 'pointer' }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {user.handle}
+                          </a>
                         </p>
                       </div>
                     </div>
