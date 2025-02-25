@@ -79,7 +79,7 @@ const IUPCDetails = () => {
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {filteredContests.map((contest) => (
               <tr
-                key={contest.id}
+                key={`${contest.contestName}-${contest.date}`}
                 className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <td className="px-4 py-3 text-gray-900 dark:text-gray-100">

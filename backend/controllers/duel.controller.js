@@ -281,7 +281,6 @@ export const completeDuel = asyncHandler(async (req, res) => {
 
 export const getDuel = asyncHandler(async (req, res) => {
   const { duelId } = req.params;
-
   // Fetch the duel by ID
   const duel = await Duel.findById(duelId).populate("user1 user2");
   if (!duel) {
@@ -479,11 +478,10 @@ export const listUserDuel = asyncHandler(async (req, res) => {
     $or: [{ user1: userId }, { user2: userId }],
     status: "ongoing",
   }).populate("user1 user2");
-
+  
   if (!duels) {
     throw new ApiError(404, "No ongoing duels found for the user");
   }
-
   return res
     .status(200)
     .json(new ApiResponse(200, duels, "User duels retrieved successfully"));

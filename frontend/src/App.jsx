@@ -17,7 +17,7 @@ import OngoingChallenge from "./pages/user/OngoingChallenge";
 import Chat from "./components/chat";
 import LoginPage from "./pages/general/Login";
 import RegisterPage from "./pages/general/register";
-import NotificationContainer from "./components/notificationContainer"; // Import the NotificationContainer
+import NotificationContainer from "./components/NotificationContainer"; // Import the NotificationContainer
 import axios from "axios";
 
 function AppContent() {
@@ -75,11 +75,64 @@ function AppContent() {
     }
   };
 
-  useEffect(() => {
-    fetchDuelRequests(); // Initial fetch
-    const intervalId = setInterval(fetchDuelRequests, 10000); // Fetch every 60 seconds
 
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  const fetchDuelStatus = async () => {
+    try {
+      // First, fetch the list of ongoing duels for the user
+      const ongoingResponse = await axios.get(
+        "http://localhost:3000/api/v1/duel/ongoingChallenge",
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (ongoingResponse.data.success) {
+        const ongoingDuels = ongoingResponse.data.data;
+
+        // For each ongoing duel, fetch detailed status
+        const duelDetailsResponse = await axios.get(
+          `http://localhost:3000/api/v1/duel/getDuel/${ongoingDuels[0]._id}`,
+          {
+            withCredentials: true,
+          }
+        );
+        if (duelDetailsResponse.data.success) {
+          const duelData = duelDetailsResponse.data.data;
+
+          // Update notifications or handle the duel data as needed
+          // setNotifications((prevNotifications) => [
+          //   ...prevNotifications,
+          //   {
+          //     id: duelData._id,
+          //     message: `${duelData.winner} has won the duel`,
+          //     sender: duelData.user2,
+          //   },
+          // ]);
+
+        } else {
+          console.error("Failed to fetch duel details:", duelDetailsResponse.data.message);
+        }
+      } else {
+        console.error("Failed to fetch ongoing duels:", ongoingResponse.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching duel status:", error);
+    }
+  };
+  useEffect(() => {
+    // Initial fetch for both functions
+    fetchDuelRequests();
+    fetchDuelStatus();
+
+    // Set up intervals for both functions
+    const duelRequestsIntervalId = setInterval(fetchDuelRequests, 10000); // Fetch every 10 seconds
+    const duelStatusIntervalId = setInterval(fetchDuelStatus, 10000); // Fetch every 10 seconds
+
+    // Cleanup intervals on component unmount
+    return () => {
+      clearInterval(duelRequestsIntervalId);
+      clearInterval(duelStatusIntervalId);
+    };
   }, []);
 
   const handleAccept = async (id) => {
