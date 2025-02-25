@@ -125,7 +125,7 @@ const DuelHistory = () => {
       {selectedDuel && (
         <DuelDetails
           duel={selectedDuel}
-          
+          currentUserId={currentUserId}
           onClose={() => setSelectedDuel(null)}
         />
       )}
