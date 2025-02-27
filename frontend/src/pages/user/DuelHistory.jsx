@@ -9,6 +9,7 @@ const DuelHistory = () => {
   const [selectedDuel, setSelectedDuel] = useState(null);
   const [duels, setDuels] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
 
@@ -16,7 +17,7 @@ const DuelHistory = () => {
     const fetchUserData = async () => {
       try {
         const userResponse = await axios.get(
-          "http://localhost:3000/api/v1/users/getCurrentUser",
+          `${apiUrl}/api/v1/users/getCurrentUser`,
           {
             withCredentials: true,
           }
@@ -24,7 +25,7 @@ const DuelHistory = () => {
         setCurrentUserId(userResponse.data.data._id);
 
         const duelResponse = await axios.get(
-          "http://localhost:3000/api/v1/duel/recentDuels",
+          `${apiUrl}/api/v1/duel/recentDuels`,
           {
             withCredentials: true,
           }

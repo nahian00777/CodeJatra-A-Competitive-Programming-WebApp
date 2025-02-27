@@ -42,12 +42,13 @@ function CFProfile() {
   const [Position, setPosition] = useState(42);
   const [Rating, setRating] = useState(0);
   const [duelWon, setduelWon] = useState(0);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchDuelStats = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/duel/fetchDuelStats`, // URL
+          `${apiUrl}/api/v1/duel/fetchDuelStats`, // URL
           {
             params: { handle }, // Query parameters
             headers: { "Content-Type": "application/json" },
@@ -71,7 +72,7 @@ function CFProfile() {
     const fetchLeaderboard = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/users/fetchLeaderboard`
+          `${apiUrl}/api/v1/users/fetchLeaderboard`
         );
 
         const leaderboardData = response.data;
@@ -91,7 +92,7 @@ function CFProfile() {
       // console.log( "fetchRatingHistory executed " +handle);
 
       const response = await axios.get(
-        "http://localhost:3000/api/v1/problems/fetchRatingHistory",
+        `${apiUrl}/api/v1/problems/fetchRatingHistory`,
         {
           params: { handle }, // Pass the handle as a query parameter
           headers: { "Content-Type": "application/json" },
@@ -106,7 +107,7 @@ function CFProfile() {
   useEffect(() => {
     const fetchSubmissionStats = asyncHandler(async () => {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/problems/fetchSubmissionStats",
+        `${apiUrl}/api/v1/problems/fetchSubmissionStats`,
         {
           params: { handle }, // Pass the handle as a query parameter
           headers: { "Content-Type": "application/json" },
@@ -122,7 +123,7 @@ function CFProfile() {
   useEffect(() => {
     const fetchRatingCount = asyncHandler(async () => {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/problems/fetchRatingCount",
+        `${apiUrl}/api/v1/problems/fetchRatingCount`,
         {
           params: { handle }, // Pass the handle as a query parameter
           headers: { "Content-Type": "application/json" },

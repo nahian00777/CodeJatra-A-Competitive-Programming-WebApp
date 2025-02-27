@@ -53,9 +53,9 @@ const Register = () => {
         form.append("username", formData.username);
         form.append("handle", formData.handle);
         if (formData.photo) form.append("avatar", formData.photo);
-
+        const apiUrl = import.meta.env.VITE_API_URL;
         const response = await fetch(
-          "http://localhost:3000/api/v1/users/register",
+          `${apiUrl}/api/v1/users/register`,
           {
             method: "POST",
             body: form,

@@ -16,7 +16,7 @@ import Topbar from "./components/Topbar";
 import OngoingChallenge from "./pages/user/OngoingChallenge";
 import Chat from "./components/chat";
 import LoginPage from "./pages/general/Login";
-import RegisterPage from "./pages/general/register";
+import RegisterPage from "./pages/general/Register";
 import NotificationContainer from "./components/NotificationContainer"; // Import the NotificationContainer
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -30,14 +30,15 @@ function AppContent() {
 
   // Use the duelData in your component logic
   const duelInfo = duelData ? { duelID: duelData._id } : { duelID: "" };
-
+  const apiUrl = import.meta.env.VITE_API_URL;
+  // console.log(apiUrl);
   // console.log("Duel data:", duelInfo);
-
 
   const checkTokensAndRedirect = async () => {
     try {
+      // console.log(apiUrl);
       const response = await axios.get(
-        "http://localhost:3000/api/v1/users/getCurrentUser",
+        `${apiUrl}/api/v1/users/getCurrentUser`,
         {
           withCredentials: true,
         }
@@ -63,12 +64,9 @@ function AppContent() {
 
   const fetchDuelRequests = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/v1/duel/checkNew",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${apiUrl}/api/v1/duel/checkNew`, {
+        withCredentials: true,
+      });
 
       if (response.data.success) {
         const newRequests = response.data.data;
@@ -85,12 +83,11 @@ function AppContent() {
     }
   };
 
-
   const fetchDuelStatus = async () => {
     try {
       // First, fetch the list of ongoing duels for the user
       // const ongoingResponse = await axios.get(
-      //   "http://localhost:3000/api/v1/duel/ongoingChallenge",
+      //   "${apiUrl}/api/v1/duel/ongoingChallenge",
       //   {
       //     withCredentials: true,
       //   }
@@ -98,7 +95,7 @@ function AppContent() {
 
       // For each ongoing duel, fetch detailed status
       const duelDetailsResponse = await axios.get(
-        `http://localhost:3000/api/v1/duel/getDuel/${duelInfo.duelID}`,
+        `${apiUrl}/api/v1/duel/getDuel/${duelInfo.duelID}`,
         {
           withCredentials: true,
         }
@@ -113,14 +110,17 @@ function AppContent() {
             {
               id: duelStatus._id,
               message: `Congratulations! You won the duel against ${duelStatus.user1}.`,
-                // : `You lost the duel against ${duelStatus.user2}. Better luck next time!`,
+              // : `You lost the duel against ${duelStatus.user2}. Better luck next time!`,
               opponent: duelStatus.user2,
             },
           ]);
         }
       } else {
-          console.error("Failed to fetch duel details:", duelDetailsResponse.data.message);
-        }
+        console.error(
+          "Failed to fetch duel details:",
+          duelDetailsResponse.data.message
+        );
+      }
     } catch (error) {
       console.error("Error fetching duel status:", error);
     }
@@ -144,7 +144,7 @@ function AppContent() {
   const handleAccept = async (id) => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/api/v1/duel/acceptDuel/${id}`,
+        `${apiUrl}/api/v1/duel/acceptDuel/${id}`,
         {},
         {
           withCredentials: true,
@@ -166,7 +166,7 @@ function AppContent() {
   const handleReject = async (id) => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/api/v1/duel/rejectDuel/${id}`,
+        `${apiUrl}/api/v1/duel/rejectDuel/${id}`,
         {},
         {
           withCredentials: true,

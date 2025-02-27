@@ -13,13 +13,14 @@ const DuelMatchmaking = ({ onClose, onlineUsers }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30); // Timer state
+  const [timeLeft, setTimeLeft] = useState(30);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/v1/users/getCurrentUser",
+          `${apiUrl}/api/v1/users/getCurrentUser`,
           { withCredentials: true }
         );
 
@@ -37,7 +38,7 @@ const DuelMatchmaking = ({ onClose, onlineUsers }) => {
   const checkInvitationStatus = async (duelId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/duel/checkInvitation/${duelId}`
+        `${apiUrl}/api/v1/duel/checkInvitation/${duelId}`
       );
       return response.data.data;
     } catch (error) {
@@ -49,7 +50,7 @@ const DuelMatchmaking = ({ onClose, onlineUsers }) => {
   const dropDuel = async (duelId) => {
     try {
       await axios.delete(
-        `http://localhost:3000/api/v1/duel/dropDuel/${duelId}`
+        `${apiUrl}/api/v1/duel/dropDuel/${duelId}`
       );
       console.log("Duel dropped successfully.");
     } catch (error) {
@@ -65,7 +66,7 @@ const DuelMatchmaking = ({ onClose, onlineUsers }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/duel/createDuel",
+        `${apiUrl}/api/v1/duel/createDuel`,
         {
           user1Id: String(currentUser.handle),
           user2Id: String(opponentHandle),
@@ -143,7 +144,7 @@ const DuelMatchmaking = ({ onClose, onlineUsers }) => {
   const handleChallenge = async (opponent) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/duel/ongoingChallenge",
+        `${apiUrl}/api/v1/duel/ongoingChallenge`,
         { withCredentials: true }
       );
       console.log(response.data.data);
@@ -268,7 +269,7 @@ const DuelMatchmaking = ({ onClose, onlineUsers }) => {
                           <a
                             href={`https://codeforces.com/profile/${user.handle}`}
                             className="text-blue-500 hover:underline"
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: "pointer" }}
                             target="_blank"
                             rel="noopener noreferrer"
                           >

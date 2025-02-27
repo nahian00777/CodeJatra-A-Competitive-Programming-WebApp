@@ -12,13 +12,14 @@ const DuelRoom = ({ onClose }) => {
 
   // Retrieve duel data from Redux store
   const duelData = useSelector((state) => state.user.duelData);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   // Extract necessary information from duelData
   const problemUrl = duelData
     ? `https://codeforces.com/problemset/problem/${duelData.problem.contestId}/${duelData.problem.index}`
     : "#";
   const opponent = duelData
-    ? {name : duelData.user2[0].handle, rating: "N/A"}
+    ? { name: duelData.user2[0].handle, rating: "N/A" }
     : { name: "Unknown", rating: "N/A" };
 
   // Handle closing the duel room
@@ -35,7 +36,7 @@ const DuelRoom = ({ onClose }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/duel/completeDuel/${duelData._id}`,
+        `${apiUrl}/api/v1/duel/completeDuel/${duelData._id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

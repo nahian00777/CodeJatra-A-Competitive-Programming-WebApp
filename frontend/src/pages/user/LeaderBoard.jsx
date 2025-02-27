@@ -20,12 +20,13 @@ const Leaderboard = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [searchQuery, setSearchQuery] = useState("");
   const [leaderboardData, setLeaderboardData] = useState([]);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/users/fetchLeaderboard`
+          `${apiUrl}/api/v1/users/fetchLeaderboard`
         );
 
         setLeaderboardData(response.data);

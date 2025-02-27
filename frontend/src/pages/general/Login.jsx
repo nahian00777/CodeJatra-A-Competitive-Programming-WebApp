@@ -4,7 +4,11 @@ import myImage from "../../assets/images/panda1.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setHandle1, setUsername1, setProfilePic } from "../../redux/userSlice.jsx"; // Adjust the import path
+import {
+  setHandle1,
+  setUsername1,
+  setProfilePic,
+} from "../../redux/userSlice.jsx"; // Adjust the import path
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -13,6 +17,7 @@ const Login = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const showAlert = (message) => {
     if (message) {
@@ -24,7 +29,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/users/login",
+        `${apiUrl}/api/v1/users/login`,
         { username, password, handle },
         { withCredentials: true }
       );

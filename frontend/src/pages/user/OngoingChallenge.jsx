@@ -23,6 +23,7 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
   const [isWinner, setIsWinner] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [duelOngoing, setDuelOngoing] = useState(true);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   // const duelData = useSelector((state) => state.user.duelData);
 
@@ -58,7 +59,7 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
     try {
       // console.log(duelData._id);
       const response = await fetch(
-        `http://localhost:3000/api/v1/duel/completeDuel/${duelData._id}`,
+        `${apiUrl}/api/v1/duel/completeDuel/${duelData._id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -102,7 +103,7 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/duel/dropDuel/${duelData._id}`,
+        `${apiUrl}/api/v1/duel/dropDuel/${duelData._id}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },

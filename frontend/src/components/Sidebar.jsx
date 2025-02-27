@@ -41,6 +41,7 @@ const Sidebar = () => {
   const [activeItem, setActiveItem] = useState("dashboard"); // Set the initial active item
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleNavigation = (path, item) => {
     setActiveItem(item); // Update active item when navigating
@@ -50,7 +51,7 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/logout",
+        `${apiUrl}/api/v1/users/logout`,
         {
           method: "POST",
           credentials: "include", // Include cookies if needed

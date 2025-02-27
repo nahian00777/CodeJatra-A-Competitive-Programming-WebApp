@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Bell, User, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import axios from "axios";
 
 const Topbar = () => {
@@ -15,16 +15,16 @@ const Topbar = () => {
     { id: 3, message: "New contest starting soon", time: "3h ago" },
   ];
 
-  const userName = useSelector((state) => state.user.username); 
-  const handle = useSelector((state) => state.user.handle); 
+  const userName = useSelector((state) => state.user.username);
+  const handle = useSelector((state) => state.user.handle);
   const profilePic = useSelector((state) => state.user.profilePic);
-
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchDuelStats = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/duel/fetchDuelStats`, // URL
+          `${apiUrl}/api/v1/duel/fetchDuelStats`, // URL
           {
             params: { handle }, // Query parameters
             headers: { "Content-Type": "application/json" },
@@ -39,7 +39,7 @@ const Topbar = () => {
 
     fetchDuelStats();
   }, []);
-  
+
   return (
     <div className="h-16 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-gray-800 dark:to-gray-900 px-6 flex items-center justify-between">
       {/* Search Section */}
@@ -62,7 +62,7 @@ const Topbar = () => {
             onClick={() => setShowNotifications(!showNotifications)}
             className="p-2 rounded-full hover:bg-white/10 relative"
           > */}
-            {/* <Bell className="w-5 h-5 text-white" />
+          {/* <Bell className="w-5 h-5 text-white" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button> */}
 
@@ -99,7 +99,7 @@ const Topbar = () => {
             src={profilePic}
             alt="Profile"
             className="w-8 h-8 rounded-full border-2 border-white/30"
-            />
+          />
           <div className="flex flex-col items-start">
             <span className="text-sm font-medium text-white"> {userName}</span>
             <span className="text-xs text-blue-200 dark:text-gray-400">

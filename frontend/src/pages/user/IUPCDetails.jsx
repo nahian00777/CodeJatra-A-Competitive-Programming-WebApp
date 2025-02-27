@@ -7,12 +7,13 @@ import "react-toastify/dist/ReactToastify.css";
 const IUPCDetails = () => {
   const [contests, setContests] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchContests = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/v1/iupcs/get-iupc"
+          `${apiUrl}/api/v1/iupcs/get-iupc`
         );
         setContests(response.data.data);
       } catch (error) {

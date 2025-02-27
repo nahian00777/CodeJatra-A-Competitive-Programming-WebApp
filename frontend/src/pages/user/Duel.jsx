@@ -51,6 +51,7 @@ function Duel() {
 
   const userName = useSelector((state) => state.user.username);
   const handle = useSelector((state) => state.user.handle);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const filteredDuels = duels.filter((duel) => {
     if (filter === "all") return true;
@@ -62,7 +63,7 @@ function Duel() {
     const updateActivity = async () => {
       try {
         await axios.post(
-          "http://localhost:3000/api/v1/users/updateActivity",
+          `${apiUrl}/api/v1/users/updateActivity`,
           {},
           {
             withCredentials: true,
@@ -86,7 +87,7 @@ function Duel() {
       );
       try {
         await axios.post(
-          "http://localhost:3000/api/v1/problems/fetchProblems",
+          `${apiUrl}/api/v1/problems/fetchProblems`,
           {
             handle,
           },
@@ -107,7 +108,7 @@ function Duel() {
     const fetchLeaderboard = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/users/fetchLeaderboard`
+          `${apiUrl}/api/v1/users/fetchLeaderboard`
         );
 
         setleaderboardData(response.data);
@@ -123,7 +124,7 @@ function Duel() {
     const fetchUserData = async () => {
       try {
         const userResponse = await axios.get(
-          "http://localhost:3000/api/v1/users/getCurrentUser",
+          `${apiUrl}/api/v1/users/getCurrentUser`,
           {
             withCredentials: true,
           }
@@ -131,7 +132,7 @@ function Duel() {
         setCurrentUserId(userResponse.data.data._id);
 
         const duelResponse = await axios.get(
-          "http://localhost:3000/api/v1/duel/recentDuels",
+          `${apiUrl}/api/v1/duel/recentDuels`,
           {
             withCredentials: true,
           }
@@ -149,7 +150,7 @@ function Duel() {
     const fetchDuelStats = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/duel/fetchDuelStats`,
+          `${apiUrl}/api/v1/duel/fetchDuelStats`,
           {
             params: { handle },
             headers: { "Content-Type": "application/json" },
@@ -169,7 +170,7 @@ function Duel() {
   const handleOngoingChallengeClick = async () => {
     try {
       const ongoingResponse = await axios.get(
-        "http://localhost:3000/api/v1/duel/ongoingChallenge",
+        `${apiUrl}/api/v1/duel/ongoingChallenge`,
         {
           withCredentials: true,
         }
@@ -190,7 +191,7 @@ function Duel() {
   const fetchOnlineUsers = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/users/getOnlineUsers"
+        `${apiUrl}/api/v1/users/getOnlineUsers`
       );
       if (response.data.success) {
         setOnlineUsers(response.data.data);

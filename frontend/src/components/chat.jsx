@@ -17,6 +17,7 @@ function Chat() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -44,7 +45,7 @@ function Chat() {
     setMessages((prev) => [...prev, { type: "user", content: userMessage }]);
 
     try {
-      const response = await fetch("http://localhost:3000/api/chat", {
+      const response = await fetch(`${apiUrl}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
