@@ -84,46 +84,37 @@ function AppContent() {
   };
 
   const fetchDuelStatus = async () => {
-    try {
-      // First, fetch the list of ongoing duels for the user
-      // const ongoingResponse = await axios.get(
-      //   "${apiUrl}/api/v1/duel/ongoingChallenge",
-      //   {
-      //     withCredentials: true,
-      //   }
-      // );
+    // try {
+    //   const duelDetailsResponse = await axios.get(
+    //     `${apiUrl}/api/v1/duel/getDuel/${duelInfo.duelID}`,
+    //     {
+    //       withCredentials: true,
+    //     }
+    //   );
 
-      // For each ongoing duel, fetch detailed status
-      const duelDetailsResponse = await axios.get(
-        `${apiUrl}/api/v1/duel/getDuel/${duelInfo.duelID}`,
-        {
-          withCredentials: true,
-        }
-      );
-
-      // console.log("Duel details:", duelDetailsResponse.data.data);
-      if (duelDetailsResponse.data.success) {
-        const duelStatus = duelDetailsResponse.data.data;
-        if (duelStatus.status === "finished") {
-          // console.log("Duel finished:", duelStatus);
-          setNotifications([
-            {
-              id: duelStatus._id,
-              message: `Congratulations! You won the duel against ${duelStatus.user1}.`,
-              // : `You lost the duel against ${duelStatus.user2}. Better luck next time!`,
-              opponent: duelStatus.user2,
-            },
-          ]);
-        }
-      } else {
-        console.error(
-          "Failed to fetch duel details:",
-          duelDetailsResponse.data.message
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching duel status:", error);
-    }
+    //   // console.log("Duel details:", duelDetailsResponse.data.data);
+    //   if (duelDetailsResponse.data.success) {
+    //     const duelStatus = duelDetailsResponse.data.data;
+    //     if (duelStatus.status === "finished") {
+    //       // console.log("Duel finished:", duelStatus);
+    //       setNotifications([
+    //         {
+    //           id: duelStatus._id,
+    //           message: `Congratulations! You won the duel against ${duelStatus.user1}.`,
+    //           // : `You lost the duel against ${duelStatus.user2}. Better luck next time!`,
+    //           opponent: duelStatus.user2,
+    //         },
+    //       ]);
+    //     }
+    //   } else {
+    //     console.error(
+    //       "Failed to fetch duel details:",
+    //       duelDetailsResponse.data.message
+    //     );
+    //   }
+    // } catch (error) {
+    //   console.error("Error fetching duel status:", error);
+    // }
   };
   useEffect(() => {
     // Initial fetch for both functions
