@@ -133,7 +133,6 @@ const loginUser = asyncHandler(async (req, res) => {
   const options = await {
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
   };
 
   // 7th && 8th step :
@@ -178,7 +177,6 @@ const logoutUser = async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
   };
 
   // 3rd step & 4th step :
