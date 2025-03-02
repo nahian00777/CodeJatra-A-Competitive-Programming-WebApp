@@ -83,7 +83,7 @@ const loginUser = asyncHandler(async (req, res) => {
     8. return success response
   */
   // 1st step :
-  const { username, password, handle} = req.body;
+  const { username, password, handle } = req.body;
   // console.log(username, password);
   // 2nd step:
   if (!username) {
@@ -133,7 +133,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const options = await {
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    sameSite: "strict",
   };
 
   // 7th && 8th step :
@@ -178,13 +178,14 @@ const logoutUser = async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: "strict",
   };
 
   // 3rd step & 4th step :
   return res
     .status(200)
     .clearCookie("accessToken", options)
-    .clearCookie("refreshToken")
+    .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged out successfully"));
 };
 
@@ -416,7 +417,7 @@ const fetchLeaderboard = asyncHandler(async (req, res) => {
       handle: user.handle,
     }))
     .sort((a, b) => b.rating - a.rating);
-  
+
   return res.status(200).json(leaderboard);
 });
 
