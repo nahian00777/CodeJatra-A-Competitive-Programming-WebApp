@@ -250,7 +250,7 @@ function Duel() {
             <StatItem
               icon={Target}
               label="Win Rate"
-              value={`${(duelStat.duelWon / duelStat.totalDuels) * 100}%`}
+              value={`${((duelStat.duelWon / duelStat.totalDuels) * 100).toFixed(2)}%`}
             />
             <StatItem
               icon={Timer}
