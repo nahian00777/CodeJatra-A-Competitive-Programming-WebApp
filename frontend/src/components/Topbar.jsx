@@ -93,7 +93,7 @@ const Topbar = () => {
         {/* Profile */}
         <button
           onClick={() => navigate("/user/cf-profile")}
-          className="flex items-center gap-3 p-1.5 rounded-full hover:bg-white/10"
+          className="flex items-center gap-3 pl-3 pr-3 pt-2 pb-2 rounded-full hover:bg-white/25"
         >
           <img
             src={profilePic}

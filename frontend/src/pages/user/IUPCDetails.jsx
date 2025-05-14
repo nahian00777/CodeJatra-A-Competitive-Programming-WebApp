@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Calendar } from "lucide-react";
+import { Calendar, Search } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -55,13 +55,15 @@ const IUPCDetails = () => {
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
         Upcoming IUPCs
       </h1>
-      <div className="mb-4">
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input
           type="text"
+          id="searchPlayer"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search IUPC (Contest Name or Host)"
-          className="p-2 w-full rounded-md border border-gray-300 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Search Upcoming IUPCs by name or host"
+          className="pl-10 py-2 w-full rounded-lg  dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       <div className="dark:bg-gray-800 rounded-xl shadow-sm p-6">

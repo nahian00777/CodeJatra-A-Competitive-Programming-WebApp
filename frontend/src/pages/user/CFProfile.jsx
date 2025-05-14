@@ -14,7 +14,7 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-import { Trophy, Users } from "lucide-react";
+import { ExternalLink, Trophy, Users } from "lucide-react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { asyncHandler } from "../../../../backend/utils/AsyncHandler";
@@ -146,11 +146,17 @@ function CFProfile() {
             className="w-full h-full object-cover"
           />
         </div>
-        <h1 className="text-3xl text-gray-400 font-bold mb-2">{username}</h1>
-        <p className="text-gray-400 mb-1">{handle}</p>
-        <p className="text-xl font-semibold text-blue-600">
-          Duel Rating: {Rating}
-        </p>
+        <h1 className="text-3xl text-gray-400 font-bold ">{username}</h1>
+        <a
+          href={`https://codeforces.com/profile/${handle}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 mb-1 transition"
+        >
+          {handle}
+          <ExternalLink className="w-3 h-3 inline-block ml-1" />
+        </a>
+        <p className="text-xl font-semibold">Duel Rating: {Rating}</p>
       </div>
 
       {/* Dual Rating Section */}
