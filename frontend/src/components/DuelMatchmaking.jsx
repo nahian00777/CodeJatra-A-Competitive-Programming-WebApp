@@ -151,7 +151,7 @@ const DuelMatchmaking = ({ onClose, onlineUsers }) => {
       if (response.data.data.length === 0) {
         sendDuelRequest(opponent.handle, selectedRating);
       } else {
-        alert("You already have an ongoing duel with this user.");
+        alert("You are already in a duel.");
       }
     } catch (error) {
       console.error("Error checking ongoing duel:", error);
