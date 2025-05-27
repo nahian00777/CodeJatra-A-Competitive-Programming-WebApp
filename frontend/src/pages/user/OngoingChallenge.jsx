@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { X, Swords, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const OngoingChallenge = ({ onClose, challengeDetails }) => {
   const navigate = useNavigate();
@@ -48,6 +49,58 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
     onClose && onClose();
     navigate("/user/duel", { replace: true });
   };
+
+  const pollDuelStatus = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/duel/getDuel/${duelData._id}`,
+        {
+          withCredentials: true, // Include credentials for CORS
+        }
+      );
+      if (response.status === 200) {
+        const updatedDuelData = response.data.data;
+        // console.log(updatedDuelData);
+        if (updatedDuelData.status === "finished") {
+          setDuelOngoing(false);
+          setMessage("Duel has ended.");
+          setShowToast(true);
+          setTimeout(() => {
+            setShowToast(false);
+          }, 3000);
+          if (updatedDuelData.winner) {
+            setIsWinner(
+              updatedDuelData.winner._id === myself._id ? true : false
+            );
+          }
+        }
+      } else {
+        const errorData = await response.json();
+        setMessage(errorData.message || "Error fetching duel status.");
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 3000);
+      }
+    } catch (error) {
+      setMessage("Error fetching duel status. Please try again.");
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+
+      console.error("Error fetching duel status:", error);
+    }
+  };
+  // Poll the duel status every 5 seconds
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      if (duelOngoing) {
+        pollDuelStatus();
+      }
+    }, 5000);
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, [duelOngoing, duelData._id]);
 
   const handleSubmitSolution = async () => {
     if (!duelOngoing) return;
@@ -102,15 +155,16 @@ const OngoingChallenge = ({ onClose, challengeDetails }) => {
     if (!duelOngoing) return;
 
     try {
-      const response = await fetch(
+      const response = await axios.patch(
         `${apiUrl}/api/v1/duel/dropDuel/${duelData._id}`,
+        {}, // No body needed for dropping a duel
         {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
+          withCredentials: true, // Include credentials for CORS
         }
       );
+      // console.log(response);
 
-      if (response.ok) {
+      if (response.status === 200) {
         setMessage("Duel dropped successfully.");
         setShowToast(true);
         setDuelOngoing(false);

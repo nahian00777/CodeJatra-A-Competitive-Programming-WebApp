@@ -23,6 +23,11 @@ const duelSchema = new mongoose.Schema(
       default: false,
     },
     winner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    droppedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     startTime: Date,
     endTime: Date,
   },

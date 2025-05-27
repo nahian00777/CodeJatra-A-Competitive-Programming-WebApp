@@ -19,7 +19,7 @@ const duelRouter = Router();
 
 duelRouter.route("/createDuel").post(createDuel);
 duelRouter.route("/completeDuel/:duelId").patch(completeDuel);
-duelRouter.route("/dropDuel/:duelId").delete(dropDuel);
+duelRouter.route("/dropDuel/:duelId").patch(verifyJWT, dropDuel);
 duelRouter.route("/getDuel/:duelId").get(getDuel);
 duelRouter.route("/fetchDuelStats").get(fetchDuelStats);
 

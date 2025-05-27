@@ -80,20 +80,79 @@ export const createDuel = asyncHandler(async (req, res) => {
 // Drop a duel
 export const dropDuel = asyncHandler(async (req, res) => {
   const { duelId } = req.params;
+  // req.user is populated by your verifyJWT middleware,
+  // regardless of whether the token came from a cookie or an Authorization header.
+  // verifyJWT is responsible for extracting the token (from cookies in this case),
+  // verifying it, and attaching the user payload to req.user.
+  const userIdDropping = req.user?._id;
 
-  // console.log(duelId);
-
-  // Find and delete the duel
-  const duel = await Duel.findByIdAndDelete(duelId);
-
-  // console.log(duel);
-  if (!duel) {
-    throw new ApiError(404, "Duel not found");
+  if (!userIdDropping) {
+    // This means verifyJWT didn't populate req.user, which indicates an authentication issue.
+    throw new ApiError(401, "Unauthorized. User not identified.");
   }
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Duel dropped successfully"));
+  const duel = await Duel.findById(duelId);
+
+  if (!duel) {
+    throw new ApiError(404, "Duel not found.");
+  }
+
+  // Extract participant IDs from arrays.
+  const user1Id = duel.user1 && duel.user1.length > 0 ? duel.user1[0] : null;
+  const user2Id = duel.user2 && duel.user2.length > 0 ? duel.user2[0] : null;
+
+  // Authorization: Check if the user dropping is actually a participant
+  const isUser1Dropping =
+    user1Id && user1Id.toString() === userIdDropping.toString();
+  const isUser2Dropping =
+    user2Id && user2Id.toString() === userIdDropping.toString();
+
+  if (!isUser1Dropping && !isUser2Dropping) {
+    throw new ApiError(
+      403,
+      "Forbidden. You are not a participant in this duel."
+    );
+  }
+  console.log(`User ${userIdDropping} is dropping the duel ${duelId}.`); // Debugging log
+  // This action is intended for forfeiting an "ongoing" duel.
+  if (duel.status !== "ongoing") {
+    throw new ApiError(
+      400,
+      `Duel cannot be forfeited because its status is '${duel.status}', not 'ongoing'.`
+    );
+  }
+
+  // Update duel to "finished" state due to forfeiture
+  duel.status = "finished"; // Using "finished" as discussed
+  duel.endTime = new Date();
+  duel.droppedBy = userIdDropping; // Mark who initiated the forfeit
+
+  // Assign winner: the other participant
+  if (isUser1Dropping && user2Id) {
+    duel.winner = user2Id;
+  } else if (isUser2Dropping && user1Id) {
+    duel.winner = user1Id;
+  } else {
+    console.warn(
+      `Duel ${duelId} (status: ongoing) forfeited by ${userIdDropping}, but the other participant could not be determined to assign a winner.`
+    );
+  }
+
+  await duel.save();
+
+  return res.status(200).json(
+    new ApiResponse( // Assuming this is your standard response wrapper
+      200,
+      {
+        duelId: duel._id,
+        status: duel.status,
+        winner: duel.winner,
+        droppedBy: duel.droppedBy,
+        endTime: duel.endTime,
+      },
+      "Duel forfeited successfully. The duel is now finished."
+    )
+  );
 });
 
 async function updateDuelRecords(
@@ -446,7 +505,14 @@ export const checkInvitation = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { invitationAccepted: duel.invitationAccepted, invitationRejected: duel.invitationRejected }, "Invitation status retrieved successfully")
+      new ApiResponse(
+        200,
+        {
+          invitationAccepted: duel.invitationAccepted,
+          invitationRejected: duel.invitationRejected,
+        },
+        "Invitation status retrieved successfully"
+      )
     );
 });
 
@@ -478,7 +544,7 @@ export const listUserDuel = asyncHandler(async (req, res) => {
     $or: [{ user1: userId }, { user2: userId }],
     status: "ongoing",
   }).populate("user1 user2");
-  
+
   if (!duels) {
     throw new ApiError(404, "No ongoing duels found for the user");
   }
