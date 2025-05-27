@@ -128,15 +128,27 @@ export const dropDuel = asyncHandler(async (req, res) => {
   duel.droppedBy = userIdDropping; // Mark who initiated the forfeit
 
   // Assign winner: the other participant
+  let winnerId = null;
+  let loserId = null;
   if (isUser1Dropping && user2Id) {
     duel.winner = user2Id;
+    winnerId = user2Id;
+    loserId = user1Id;
   } else if (isUser2Dropping && user1Id) {
     duel.winner = user1Id;
+    winnerId = user1Id;
+    loserId = user2Id;
   } else {
     console.warn(
       `Duel ${duelId} (status: ongoing) forfeited by ${userIdDropping}, but the other participant could not be determined to assign a winner.`
     );
   }
+
+  // Call the function with the winner's and loser's IDs and rating changes
+  const ratingChangeWinner = 25; // Positive number for winner
+  const ratingChangeLoser = -25; // Negative number for loser
+
+  updateDuelRecords(winnerId, loserId, ratingChangeWinner, ratingChangeLoser);
 
   await duel.save();
 
@@ -502,18 +514,16 @@ export const checkInvitation = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Duel not found");
   }
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          invitationAccepted: duel.invitationAccepted,
-          invitationRejected: duel.invitationRejected,
-        },
-        "Invitation status retrieved successfully"
-      )
-    );
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        invitationAccepted: duel.invitationAccepted,
+        invitationRejected: duel.invitationRejected,
+      },
+      "Invitation status retrieved successfully"
+    )
+  );
 });
 
 export const recentDuels = asyncHandler(async (req, res) => {
