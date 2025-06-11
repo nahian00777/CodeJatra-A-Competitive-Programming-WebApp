@@ -38,33 +38,42 @@ const Register = () => {
       return;
     }
 
-    if (
-      formData.fullName &&
-      formData.email &&
-      formData.password &&
-      formData.username &&
-      formData.handle
-    ) {
+    const { fullName, email, password, username, handle, photo } = formData;
+
+    if (fullName && email && password && username && handle && photo) {
       setLoading(true);
+
       try {
-        const form = new FormData();
-        form.append("fullName", formData.fullName);
-        form.append("email", formData.email);
-        form.append("password", formData.password);
-        form.append("username", formData.username);
-        form.append("handle", formData.handle);
-        if (formData.photo) form.append("avatar", formData.photo);
-        const apiUrl = import.meta.env.VITE_API_URL;
-        const response = await fetch(
-          `${apiUrl}/api/v1/users/register`,
-          {
-            method: "POST",
-            body: form,
-          },
-          { withCredentials: true }
+        // ✅ 1. Check if handle exists on Codeforces
+        const cfResponse = await fetch(
+          `https://codeforces.com/api/user.info?handles=${handle}`
         );
+        const cfData = await cfResponse.json();
+
+        if (cfData.status !== "OK") {
+          setAlertMessage("Invalid Codeforces handle.");
+          setLoading(false);
+          return;
+        }
+
+        // ✅ 2. Prepare form and send to your backend
+        const form = new FormData();
+        form.append("fullName", fullName);
+        form.append("email", email);
+        form.append("password", password);
+        form.append("username", username);
+        form.append("handle", handle);
+        if (photo) form.append("avatar", photo);
+
+        const apiUrl = import.meta.env.VITE_API_URL;
+        const response = await fetch(`${apiUrl}/api/v1/users/register`, {
+          method: "POST",
+          body: form,
+          credentials: "include", // ⬅️ correct way to set credentials
+        });
 
         const result = await response.json();
+
         if (response.ok) {
           setAlertMessage("Registration successful!");
           navigate("/login");
@@ -73,6 +82,7 @@ const Register = () => {
         }
       } catch (error) {
         setAlertMessage("Error during registration.");
+        console.error("Registration error:", error);
       } finally {
         setLoading(false);
       }
@@ -243,7 +253,7 @@ const Register = () => {
               {/* File Upload */}
               <div>
                 <label className="block text-sm font-semibold text-gray-300 mb-1.5">
-                  Profile Photo (Optional)
+                  Profile Photo (Mandatory)
                 </label>
                 <div className="relative">
                   <input

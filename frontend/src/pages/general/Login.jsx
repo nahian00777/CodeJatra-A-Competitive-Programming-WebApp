@@ -38,8 +38,6 @@ const Login = () => {
       );
 
       if (response.status === 200) {
-        setAlertMessage("Login successful");
-        showAlert("Login successful");
         dispatch(setUsername1(username));
         dispatch(setHandle1(handle));
         dispatch(setProfilePic(response.data.data.user.avatar));
@@ -53,7 +51,7 @@ const Login = () => {
         error.response?.data?.message || "Username Or Password Not Correct";
       setAlertMessage(errorMessage);
       showAlert(errorMessage);
-      console.error("Error logging in:", error);
+      // console.error("Error logging in:", error);
     } finally {
       setIsLoading(false);
     }
