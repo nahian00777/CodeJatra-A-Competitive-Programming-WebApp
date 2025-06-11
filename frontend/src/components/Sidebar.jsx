@@ -1,172 +1,245 @@
-import React, { useState } from "react";
-import myImage from "../assets/images/LOGOBRIGHT.jpg";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import {
-  Search,
   Swords,
   Trophy,
-  Calendar,
   Info,
-  ChevronLeft,
-  ChevronRight,
-  User,
-  Home,
+  Menu,
+  Settings,
+  Activity,
   LogOut,
 } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
-import { logout, toggleDarkMode } from "../redux/userSlice.jsx";
-import { clearUserData } from "../redux/userSlice.jsx";
 
-const NavItem = ({ icon, text, collapsed, onClick, isActive }) => (
-  <button
+// Import actions from your Redux slice
+import {
+  setUsername1,
+  setProfilePic,
+  clearUserData,
+} from "../redux/userSlice.jsx";
+
+// --- Data for Navigation Links ---
+const mainLinks = [
+  { id: "duel", text: "Duel", icon: <Swords size={20} />, path: "/user/duel" },
+  {
+    id: "leaderboard",
+    text: "Leaderboard",
+    icon: <Trophy size={20} />,
+    path: "/user/leaderboard",
+  },
+  {
+    id: "iupc-details",
+    text: "IUPC Details",
+    icon: <Info size={20} />,
+    path: "/user/iupc-details",
+  },
+];
+
+// --- Reusable NavItem Component ---
+const NavItem = ({ link, collapsed, isActive, onClick = () => {} }) => (
+  <Link
+    to={link.path}
     onClick={onClick}
-    className={`w-full flex items-center ${
-      collapsed ? "justify-center" : "gap-4"
-    } px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg transition-all duration-200 group relative ${
-      isActive ? "bg-gray-800" : ""
+    title={collapsed ? link.text : ""}
+    className={`group flex items-center h-10 w-full px-3 rounded-full cursor-pointer transition-colors duration-200 ${
+      isActive
+        ? "bg-blue-500/20 text-blue-300 font-medium"
+        : "text-gray-400 hover:bg-white/5"
     }`}
   >
-    <div className="flex items-center justify-center">{icon}</div>
-    {!collapsed && <span>{text}</span>}
-    {collapsed && (
-      <div className="absolute left-14 px-2 py-1 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-        {text}
-      </div>
-    )}
-  </button>
+    <div className="flex-shrink-0">{link.icon}</div>
+    <span
+      className={`overflow-hidden whitespace-nowrap transition-all duration-200 ${
+        collapsed ? "w-0 ml-0" : "w-full ml-4"
+      }`}
+    >
+      {link.text}
+    </span>
+  </Link>
 );
 
-const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [activeItem, setActiveItem] = useState("dashboard"); // Set the initial active item
+// --- User Profile Block ---
+const UserProfile = ({ user, collapsed, onNavigate, isLoading }) => {
+  // Shows a skeleton loader while user data is being fetched
+  if (isLoading) {
+    return (
+      <div className="flex items-center w-full p-2">
+        <div className="w-8 h-8 rounded-full bg-gray-700 animate-pulse flex-shrink-0"></div>
+        <div
+          className={`overflow-hidden transition-all duration-200 ${
+            collapsed ? "w-0" : "w-full ml-3"
+          }`}
+        >
+          <div className="h-4 w-24 bg-gray-700 rounded animate-pulse"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      onClick={onNavigate}
+      className="flex items-center w-full p-2 rounded-full transition-colors duration-200 hover:bg-white/5 cursor-pointer"
+    >
+      <img
+        src={user.avatar}
+        alt="User Avatar"
+        className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+      />
+      <div
+        className={`overflow-hidden transition-all duration-200 ${
+          collapsed ? "w-0" : "w-full ml-3"
+        }`}
+      >
+        <p className="font-medium text-gray-200 text-sm whitespace-nowrap">
+          {user.name}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// --- Main Sidebar Component ---
+const Sidebar = ({ collapsed, onToggle }) => {
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-  const handleNavigation = (path, item) => {
-    setActiveItem(item); // Update active item when navigating
-    navigate(path); // Navigate to the page
+  const { username1, profilePic } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (username1) {
+      setIsLoadingUser(false);
+      return;
+    }
+    const fetchCurrentUser = async () => {
+      setIsLoadingUser(true);
+      try {
+        const response = await axios.get(
+          `${apiUrl}/api/v1/users/current-user`,
+          { withCredentials: true }
+        );
+        if (response.data.success) {
+          const user = response.data.data;
+          dispatch(setUsername1(user.username));
+          dispatch(setProfilePic(user.avatar));
+        }
+      } catch (error) {
+        console.error("No active session found for sidebar.");
+      } finally {
+        setIsLoadingUser(false);
+      }
+    };
+    fetchCurrentUser();
+  }, [dispatch, username1, apiUrl]);
+
+  const user = {
+    name: username1,
+    avatar:
+      profilePic ||
+      `https://ui-avatars.com/api/?name=${
+        username1 || "G"
+      }&background=1E1F22&color=fff`,
   };
 
   const handleLogout = async () => {
     try {
-      const response = await fetch(
+      await axios.post(
         `${apiUrl}/api/v1/users/logout`,
-        {
-          method: "POST",
-          credentials: "include", // Include cookies if needed
-        }
+        {},
+        { withCredentials: true }
       );
-
-      if (response.ok) {
-        console.log("User logged out");
-        // Clear the user data from the Redux store
-        dispatch(clearUserData());
-        // Redirect to the login page
-        navigate("/");
-      } else {
-        console.error("Failed to log out");
-        // Handle error if needed
-      }
+      dispatch(clearUserData());
+      navigate("/");
     } catch (error) {
-      console.error("An error occurred during logout:", error);
-      // Handle error if needed
+      console.error("Logout failed", error);
     }
   };
 
+  const secondaryLinks = [
+    {
+      id: "activity",
+      text: "Activity",
+      icon: <Activity size={20} />,
+      path: "/user/activity",
+    },
+    {
+      id: "settings",
+      text: "Settings",
+      icon: <Settings size={20} />,
+      path: "/user/settings",
+    },
+    {
+      id: "logout",
+      text: "Logout",
+      icon: <LogOut size={20} />,
+      path: "/",
+      onClick: handleLogout,
+    },
+  ];
+
   return (
-    <div
-      className={`h-full bg-gray-900 border-r border-gray-700 transition-all duration-300 ${
-        collapsed ? "w-16" : "w-64"
+    <aside
+      className={`h-screen flex flex-col bg-[#1E1F22] flex-shrink-0 transition-all duration-300 ease-in-out ${
+        collapsed ? "w-20" : "w-64"
       }`}
     >
-      <div className="flex flex-col h-full p-4">
-        <div className="flex items-center justify-between mb-6">
-          {!collapsed && (
-            <div className="flex items-center">
-              {/* <img
-                src= {myImage}
-                alt="CodeJatra Icon"
-                className="w-6 h-6 mr-3"
-              /> */}
-              <h6 className="text-xl font-bold text-white">CodeJatra</h6>
-            </div>
-          )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg hover:bg-gray-800 text-white"
-          >
-            {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          </button>
+      <header className="flex items-center p-3 h-16 flex-shrink-0">
+        <button
+          onClick={onToggle}
+          className="p-3 rounded-full hover:bg-white/5 transition-colors"
+        >
+          <Menu size={20} className="text-gray-300" />
+        </button>
+        <div
+          className={`overflow-hidden transition-all duration-200 ${
+            collapsed ? "w-0" : "w-full ml-2"
+          }`}
+        >
+          <span className="font-bold text-xl whitespace-nowrap text-white">
+            CodeJatra
+          </span>
         </div>
+      </header>
 
-        <div className="relative mb-4">
-          <Search
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={18}
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-1">
+        {mainLinks.map((link) => (
+          <NavItem
+            key={link.id}
+            link={link}
+            collapsed={collapsed}
+            isActive={location.pathname.startsWith(link.path)}
           />
-          <input
-            type="text"
-            placeholder={collapsed ? "" : "Search users..."}
-            className={`w-full pl-10 pr-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:border-blue-500 ${
-              collapsed ? "hidden" : "block"
-            }`}
-          />
-        </div>
+        ))}
+      </nav>
 
-        <nav className="flex-1 space-y-2">
-          {/* <NavItem
-            icon={<Home size={20} />}
-            text="Dashboard"
-            collapsed={collapsed}
-            onClick={() => handleNavigation("/user/dashboard", "dashboard")}
-            isActive={activeItem === "dashboard"}
-          /> */}
+      <footer className="p-3 mt-auto space-y-1 flex-shrink-0">
+        <UserProfile
+          user={user}
+          collapsed={collapsed}
+          onNavigate={() => navigate("/user/profile")}
+          isLoading={isLoadingUser}
+        />
+        <div className="border-t border-white/10 my-2"></div>
+        {secondaryLinks.map((link) => (
           <NavItem
-            icon={<Swords size={20} />}
-            text="DUEL"
+            key={link.id}
+            link={link}
             collapsed={collapsed}
-            onClick={() => handleNavigation("/user/duel", "duel")}
-            isActive={activeItem === "duel"}
-          />
-          <NavItem
-            icon={<Trophy size={20} />}
-            text="Leaderboard"
-            collapsed={collapsed}
-            onClick={() => handleNavigation("/user/leaderboard", "leaderboard")}
-            isActive={activeItem === "leaderboard"}
-          />
-          <NavItem
-            icon={<Info size={20} />}
-            text="IUPC Details"
-            collapsed={collapsed}
-            onClick={() =>
-              handleNavigation("/user/iupc-details", "iupc-details")
-            }
-            isActive={activeItem === "iupc-details"}
-          />
-          {/* <NavItem
-            icon={<Calendar size={20} />}
-            text="Contest Details"
-            collapsed={collapsed}
-            onClick={() =>
-              handleNavigation("/user/contest-details", "contest-details")
-            }
-            isActive={activeItem === "contest-details"}
-          /> */}
-        </nav>
-
-        <div className="mt-auto">
-          <NavItem
-            icon={<LogOut size={20} />}
-            text="Logout"
-            collapsed={collapsed}
-            onClick={handleLogout}
             isActive={false}
+            onClick={(e) => {
+              if (link.onClick) {
+                e.preventDefault();
+                link.onClick();
+              }
+            }}
           />
-        </div>
-      </div>
-    </div>
+        ))}
+      </footer>
+    </aside>
   );
 };
 

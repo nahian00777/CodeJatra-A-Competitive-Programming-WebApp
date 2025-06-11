@@ -28,6 +28,9 @@ function AppContent() {
   // Call useSelector at the top level of the component
   const duelData = useSelector((state) => state.user.duelData);
 
+  // ADDED: State for controlling the sidebar collapse
+  const [collapsed, setCollapsed] = useState(false);
+
   // Use the duelData in your component logic
   const duelInfo = duelData ? { duelID: duelData._id } : { duelID: "" };
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -91,7 +94,6 @@ function AppContent() {
     //       withCredentials: true,
     //     }
     //   );
-
     //   // console.log("Duel details:", duelDetailsResponse.data.data);
     //   if (duelDetailsResponse.data.success) {
     //     const duelStatus = duelDetailsResponse.data.data;
@@ -181,9 +183,12 @@ function AppContent() {
           path="/user/*"
           element={
             <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-              <Sidebar />
+              <Sidebar
+                collapsed={collapsed}
+                onToggle={() => setCollapsed(!collapsed)}
+              />
               <div className="flex-1 flex flex-col">
-                <Topbar />
+                {/* <Topbar /> */}
                 <main className="flex-1 overflow-y-auto">
                   <Routes>
                     <Route path="dashboard" element={<DashBoard />} />
