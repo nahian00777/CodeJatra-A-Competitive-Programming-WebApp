@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, X, Eye, EyeOff, User, Upload } from "lucide-react";
+import { Mail, Lock, X, Eye, EyeOff, User, Upload, Code } from "lucide-react";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -175,14 +175,25 @@ const Register = () => {
                 </div>
               </div>
 
+              {/* === MODIFIED SECTION START === */}
               {/* Handle Field */}
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-1.5">
-                  Codeforces Handle
-                </label>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="block text-sm font-semibold text-gray-300">
+                    Codeforces Handle
+                  </label>
+                  <a
+                    href="https://codeforces.com/register"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
+                  >
+                    Create one?
+                  </a>
+                </div>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-4 w-4 text-gray-500" />
+                    <Code className="h-4 w-4 text-gray-500" />
                   </div>
                   <input
                     type="text"
@@ -190,11 +201,12 @@ const Register = () => {
                     value={formData.handle}
                     onChange={handleChange}
                     className="w-full pl-9 pr-3 py-2.5 bg-gray-700/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-gray-700 transition-all duration-200 text-white placeholder-gray-500 text-sm"
-                    placeholder="cf_handle"
+                    placeholder="e.g., tourist"
                     required
                   />
                 </div>
               </div>
+              {/* === MODIFIED SECTION END === */}
 
               {/* Password Field */}
               <div>
@@ -231,7 +243,7 @@ const Register = () => {
               {/* File Upload */}
               <div>
                 <label className="block text-sm font-semibold text-gray-300 mb-1.5">
-                  Profile Photo
+                  Profile Photo (Optional)
                 </label>
                 <div className="relative">
                   <input
@@ -244,9 +256,9 @@ const Register = () => {
                   />
                   <label
                     htmlFor="photo-upload"
-                    className="w-full flex items-center justify-center px-4 py-2.5 bg-gray-700/50 border border-gray-600 border-dashed rounded-lg cursor-pointer hover:bg-gray-700 transition-all duration-200 text-sm"
+                    className="w-full flex items-center px-4 py-2.5 bg-gray-700/50 border border-gray-600 border-dashed rounded-lg cursor-pointer hover:bg-gray-700 transition-all duration-200 text-sm"
                   >
-                    <Upload className="h-4 w-4 text-gray-500 mr-2" />
+                    <Upload className="h-4 w-4 text-gray-500 mr-3" />
                     <span className="text-gray-400">
                       {photoName || "Choose a file"}
                     </span>
@@ -254,16 +266,24 @@ const Register = () => {
                 </div>
               </div>
 
-              <div className="flex items-center">
+              {/* Terms and Conditions */}
+              <div className="flex items-center pt-2">
                 <input
                   type="checkbox"
                   name="termsAccepted"
                   checked={formData.termsAccepted}
                   onChange={handleChange}
+                  id="terms-checkbox"
                   className="w-3.5 h-3.5 text-indigo-600 bg-gray-700 border-gray-600 rounded focus:ring-indigo-500 focus:ring-2"
                 />
-                <label className="ml-2 text-xs text-gray-400">
-                  I agree to the terms and conditions
+                <label
+                  htmlFor="terms-checkbox"
+                  className="ml-2.5 text-xs text-gray-400"
+                >
+                  I agree to the{" "}
+                  <a href="/terms" className="text-indigo-400 hover:underline">
+                    Terms and Conditions
+                  </a>
                 </label>
               </div>
 
