@@ -74,18 +74,18 @@ This will run the React frontend on **port 5173** and the backend on **port 3000
 ### General Pages
 |  |  |
 |---------|---------|
-| ![HomePage](https://github.com/user-attachments/assets/60e17950-7857-4297-9c5c-8c6e0ed1ce11) | ![Login Page](https://github.com/user-attachments/assets/c478a4e0-0b21-4cae-b476-004ce532f809) <br> ![Register Page](https://github.com/user-attachments/assets/e7bcb8d3-3f28-4832-a44f-a29f8a57ad7e) |
+| ![LandingPage](https://github.com/user-attachments/assets/1a933ca9-637d-43d0-9fb5-bd368931d9c2) | ![SignInPage](https://github.com/user-attachments/assets/84df1dfd-7437-4272-b92d-2de8c1209c80) <br> ![SignUpPage](https://github.com/user-attachments/assets/f88e263f-1cfc-4e30-ae0b-c5ddf12bbb5d) |
 
 ### Duel Panel
 |  |  |
 |---------|---------|
-| ![Duel Page](https://github.com/user-attachments/assets/bf022974-2068-45b6-a511-3aa1048f978e) | ![Finding Opponent Page](https://github.com/user-attachments/assets/52050e1c-a12c-4435-a3b4-f83c38d29b8f) |
-| ![Ongoing Challenge Page](https://github.com/user-attachments/assets/e51da3df-6b00-456a-b9cb-8dd702a5dc66) | |
+| ![DuelArena](https://github.com/user-attachments/assets/b9712905-3363-44a0-abdb-c44588bb7bfd) |  ![FindOpponent](https://github.com/user-attachments/assets/fe1b14f6-182a-4593-bfec-37432432e66e) <br> ![OngoingChallenge](https://github.com/user-attachments/assets/58cad31b-8611-45b2-8a1b-fb512cc018aa) | 
 
 ### Other Features
 |  |  |
 |---------|---------|
-| ![Profile Page](https://github.com/user-attachments/assets/c812aeac-6729-4ca5-9839-3b39e8e2af9c) | ![Leaderboard Page](https://github.com/user-attachments/assets/1b93d8c2-fbb1-4740-954f-e76024695450) <br> ![IUPC Page](https://github.com/user-attachments/assets/de943d40-b868-48b1-a1a6-4a788d3bbb8c) |
+| ![ProfilePage](https://github.com/user-attachments/assets/6aa855e7-dff4-48e6-b3af-7c3d80eea873) |  ![LeaderBoard](https://github.com/user-attachments/assets/f246a779-95e7-4938-a40f-3fdee16b71af)
+<br> ![UpcomingIUPCS](https://github.com/user-attachments/assets/c836679d-6468-4e9a-bbd3-cb73f59ad62c) |
 
 ---
 
