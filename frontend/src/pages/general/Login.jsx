@@ -7,6 +7,7 @@ import {
   setHandle1,
   setUsername1,
   setProfilePic,
+  setIsLoggedIn,
 } from "../../redux/userSlice.jsx";
 
 const Login = () => {
@@ -41,6 +42,7 @@ const Login = () => {
         dispatch(setUsername1(username));
         dispatch(setHandle1(handle));
         dispatch(setProfilePic(response.data.data.user.avatar));
+        dispatch(setIsLoggedIn(true));
         navigate("/user/duel");
       } else {
         setAlertMessage("Login failed");

@@ -7,6 +7,7 @@ const initialState = {
   profilePic: localStorage.getItem("profilePic") || "", // Load profilePic from localStorage if it exists
   darkMode: localStorage.getItem("darkMode") === "true" || false, // Load darkMode preference from localStorage
   duelData: null,
+  isLoggedIn: false,
 };
 
 // Create a slice for user data
@@ -42,12 +43,17 @@ const userSlice = createSlice({
       state.profilePic = action.payload;
       localStorage.setItem("profilePic", action.payload);
     },
+    setIsLoggedIn: (state, action) => {
+      state.isLoggedIn = action.payload;
+      localStorage.setItem("isLoggedIn", action.payload);
+    },
     // Reducer to clear the username (logout)
     logout: (state) => {
       state.username = "";
       state.handle = "";
       state.profilePic = "";
       state.darkMode = false;
+      state.isLoggedIn = false;
       localStorage.removeItem("username");
       localStorage.removeItem("handle");
       localStorage.removeItem("profilePic");
@@ -70,7 +76,9 @@ export const {
   toggleDarkMode,
   setDuelData,
   clearUserData,
+  setIsLoggedIn
 } = userSlice.actions;
 
 // Export the reducer
 export default userSlice.reducer;
+g
